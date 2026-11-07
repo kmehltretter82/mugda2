@@ -1,0 +1,386 @@
+I would make your Avis–Friedmann formalization the first major scientific application of Mugda2. It gives Mugda2 a concrete purpose: help people construct algorithms and difficult examples, explore their behavior, and prove both correctness and complexity.
+
+The two projects can reinforce each other:
+- The formalization program supplies demanding mathematics: policy iteration, simplex, game reductions, exponential executions, quantitative upper bounds.
+- Mugda2 supplies better ways to express the constructions and their proofs: sized recursion, resource annotations, executable witnesses, symbolic certificates, and an interface for LLM agents.
+- Lean supplies the initial proof-checking foundation and existing mathematical library.
+I recovered the main directions from your other chat: execution-preserving correspondences, rational-to-real LP transport, broader pivot-rule lower bounds, robustness, and an effective-horizon upper bound. These fit together well. After checking the newer literature, I would sharpen the plan around one achievable quantitative theorem and two more ambitious complexity questions.
+1. What your existing formalization gives Mugda2
+Your mission currently reports the main theorem as proved. Its statement is substantial and precise: for every \(n\geq 3\), the explicit LP has a complete Cunningham execution from the prescribed starting state, with at least \(2^n\) pivots and strict objective improvement at every pivot. The family has \(5(n-1)\) equality constraints and \(10(n-1)\) variables. I checked the public statements and principal definitions; I have not independently rebuilt the accepted proof’s full dependency closure. Mission and theorem statement
+
+This is a particularly useful foundation because it concerns the behavior of an algorithm. The original Avis–Friedmann paper connects such behavior across parity games, Markov decision processes, linear programs, and realizable cube orientations. That gives you several representations of closely related phenomena. arxiv.org
+
+There is also an immediate engineering opportunity. Your public Lean definitions describe exact rational simplex operations using noncomputable matrix inverses. They specify the mathematics, while an executable, certified evaluator remains a separate layer to build. Simplex definitions
+
+That suggests a strong first application:
+Mugda2 turns the mathematical specification into an executable research environment, while preserving an explicit connection to the Lean theorems.
+
+An exact evaluator, a cursor-aware execution model, and a browser showing why each pivot occurs would already make the formalization more useful for further research.
+2. Give Mugda2 a precise identity
+I would position it as:
+A language and workbench for constructive algorithms with checked termination, correctness, and quantitative behavior.
+
+“Quantitative behavior” should include upper bounds, lower bounds, and preservation of costs through transformations.
+
+For this application, that means being able to express:
+- A family of games or LPs indexed by \(n\).
+- An algorithm with an explicit state, including its history.
+- A transformation between representations.
+- An executable instance generator.
+- A proof that the transformation preserves the relevant execution.
+- A certificate of a long execution or an upper bound on its length.
+The underlying abstractions should be general enough to support other domains later: rewriting systems, recursive interpreters, search procedures, graph algorithms, and certified numerical methods.
+Start with Lean as the checking backend
+My practical recommendation is to prototype the proof-facing part of Mugda2 as a Lean extension or frontend that produces ordinary Lean definitions and proofs, with no kernel changes.
+
+Lean already separates rich elaboration from the smaller core checked by its kernel. Mugda2 can use that separation: agents and elaborators construct candidate terms; Lean checks the results. lean-lang.org
+
+A useful architecture would be:
+#chatgpt-mermaid-_r_vo_{font-family:-apple-system-body,ui-sans-serif,-apple-system,system-ui,"Segoe UI",Helvetica,"Apple Color Emoji",Arial,sans-serif,"Segoe UI Emoji","Segoe UI Symbol";font-size:16px;fill:rgb(237, 237, 237);}@keyframes edge-animation-frame{from{stroke-dashoffset:0;}}@keyframes dash{to{stroke-dashoffset:0;}}#chatgpt-mermaid-_r_vo_ .edge-animation-slow{stroke-dasharray:9,5!important;stroke-dashoffset:900;animation:dash 50s linear infinite;stroke-linecap:round;}#chatgpt-mermaid-_r_vo_ .edge-animation-fast{stroke-dasharray:9,5!important;stroke-dashoffset:900;animation:dash 20s linear infinite;stroke-linecap:round;}#chatgpt-mermaid-_r_vo_ .error-icon{fill:rgb(48, 48, 48);}#chatgpt-mermaid-_r_vo_ .error-text{fill:rgb(237, 237, 237);stroke:rgb(237, 237, 237);}#chatgpt-mermaid-_r_vo_ .edge-thickness-normal{stroke-width:1px;}#chatgpt-mermaid-_r_vo_ .edge-thickness-thick{stroke-width:3.5px;}#chatgpt-mermaid-_r_vo_ .edge-pattern-solid{stroke-dasharray:0;}#chatgpt-mermaid-_r_vo_ .edge-thickness-invisible{stroke-width:0;fill:none;}#chatgpt-mermaid-_r_vo_ .edge-pattern-dashed{stroke-dasharray:3;}#chatgpt-mermaid-_r_vo_ .edge-pattern-dotted{stroke-dasharray:2;}#chatgpt-mermaid-_r_vo_ .marker{fill:rgb(175, 175, 175);stroke:rgb(175, 175, 175);}#chatgpt-mermaid-_r_vo_ .marker.cross{stroke:rgb(175, 175, 175);}#chatgpt-mermaid-_r_vo_ svg{font-family:-apple-system-body,ui-sans-serif,-apple-system,system-ui,"Segoe UI",Helvetica,"Apple Color Emoji",Arial,sans-serif,"Segoe UI Emoji","Segoe UI Symbol";font-size:16px;}#chatgpt-mermaid-_r_vo_ p{margin:0;}#chatgpt-mermaid-_r_vo_ .label{font-family:-apple-system-body,ui-sans-serif,-apple-system,system-ui,"Segoe UI",Helvetica,"Apple Color Emoji",Arial,sans-serif,"Segoe UI Emoji","Segoe UI Symbol";color:rgb(237, 237, 237);}#chatgpt-mermaid-_r_vo_ .cluster-label text{fill:rgb(237, 237, 237);}#chatgpt-mermaid-_r_vo_ .cluster-label span{color:rgb(237, 237, 237);}#chatgpt-mermaid-_r_vo_ .cluster-label span p{background-color:transparent;}#chatgpt-mermaid-_r_vo_ .label text,#chatgpt-mermaid-_r_vo_ span{fill:rgb(237, 237, 237);color:rgb(237, 237, 237);}#chatgpt-mermaid-_r_vo_ .node rect,#chatgpt-mermaid-_r_vo_ .node circle,#chatgpt-mermaid-_r_vo_ .node ellipse,#chatgpt-mermaid-_r_vo_ .node polygon,#chatgpt-mermaid-_r_vo_ .node path{fill:rgb(19, 33, 54);stroke:rgb(31, 78, 148);stroke-width:1px;}#chatgpt-mermaid-_r_vo_ .rough-node .label text,#chatgpt-mermaid-_r_vo_ .node .label text,#chatgpt-mermaid-_r_vo_ .image-shape .label,#chatgpt-mermaid-_r_vo_ .icon-shape .label{text-anchor:middle;}#chatgpt-mermaid-_r_vo_ .node .katex path{fill:#000;stroke:#000;stroke-width:1px;}#chatgpt-mermaid-_r_vo_ .rough-node .label,#chatgpt-mermaid-_r_vo_ .node .label,#chatgpt-mermaid-_r_vo_ .image-shape .label,#chatgpt-mermaid-_r_vo_ .icon-shape .label{text-align:center;}#chatgpt-mermaid-_r_vo_ .node.clickable{cursor:pointer;}#chatgpt-mermaid-_r_vo_ .root .anchor path{fill:rgb(175, 175, 175)!important;stroke-width:0;stroke:rgb(175, 175, 175);}#chatgpt-mermaid-_r_vo_ .arrowheadPath{fill:rgb(175, 175, 175);}#chatgpt-mermaid-_r_vo_ .edgePath .path{stroke:rgb(175, 175, 175);stroke-width:1px;}#chatgpt-mermaid-_r_vo_ .flowchart-link{stroke:rgb(175, 175, 175);fill:none;}#chatgpt-mermaid-_r_vo_ .edgeLabel{background-color:rgb(14, 14, 14);text-align:center;}#chatgpt-mermaid-_r_vo_ .edgeLabel p{background-color:rgb(14, 14, 14);}#chatgpt-mermaid-_r_vo_ .edgeLabel rect{opacity:0.5;background-color:rgb(14, 14, 14);fill:rgb(14, 14, 14);}#chatgpt-mermaid-_r_vo_ .labelBkg{background-color:rgba(14, 14, 14, 0.5);}#chatgpt-mermaid-_r_vo_ .cluster rect{fill:rgb(48, 48, 48);stroke:rgba(255, 255, 255, 0.15);stroke-width:1px;}#chatgpt-mermaid-_r_vo_ .cluster text{fill:rgb(237, 237, 237);}#chatgpt-mermaid-_r_vo_ .cluster span{color:rgb(237, 237, 237);}#chatgpt-mermaid-_r_vo_ div.mermaidTooltip{position:absolute;text-align:center;max-width:200px;padding:2px;font-family:-apple-system-body,ui-sans-serif,-apple-system,system-ui,"Segoe UI",Helvetica,"Apple Color Emoji",Arial,sans-serif,"Segoe UI Emoji","Segoe UI Symbol";font-size:12px;background:rgb(48, 48, 48);border:1px solid rgba(255, 255, 255, 0.15);border-radius:2px;pointer-events:none;z-index:100;}#chatgpt-mermaid-_r_vo_ .flowchartTitleText{text-anchor:middle;font-size:18px;fill:rgb(237, 237, 237);}#chatgpt-mermaid-_r_vo_ rect.text{fill:none;stroke-width:0;}#chatgpt-mermaid-_r_vo_ .icon-shape,#chatgpt-mermaid-_r_vo_ .image-shape{background-color:rgb(14, 14, 14);text-align:center;}#chatgpt-mermaid-_r_vo_ .icon-shape p,#chatgpt-mermaid-_r_vo_ .image-shape p{background-color:rgb(14, 14, 14);padding:2px;}#chatgpt-mermaid-_r_vo_ .icon-shape .label rect,#chatgpt-mermaid-_r_vo_ .image-shape .label rect{opacity:0.5;background-color:rgb(14, 14, 14);fill:rgb(14, 14, 14);}#chatgpt-mermaid-_r_vo_ .label-icon{display:inline-block;height:1em;overflow:visible;vertical-align:-0.125em;}#chatgpt-mermaid-_r_vo_ .node .label-icon path{fill:currentColor;stroke:revert;stroke-width:revert;}#chatgpt-mermaid-_r_vo_ .node .neo-node{stroke:rgb(31, 78, 148);}#chatgpt-mermaid-_r_vo_ [data-look="neo"].node rect,#chatgpt-mermaid-_r_vo_ [data-look="neo"].cluster rect,#chatgpt-mermaid-_r_vo_ [data-look="neo"].node polygon{stroke:url(#chatgpt-mermaid-_r_vo_-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#chatgpt-mermaid-_r_vo_ [data-look="neo"].swimlane.cluster rect{filter:none;}#chatgpt-mermaid-_r_vo_ [data-look="neo"].node path{stroke:url(#chatgpt-mermaid-_r_vo_-gradient);stroke-width:1px;}#chatgpt-mermaid-_r_vo_ [data-look="neo"].node .outer-path{filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#chatgpt-mermaid-_r_vo_ [data-look="neo"].node .neo-line path{stroke:rgb(31, 78, 148);filter:none;}#chatgpt-mermaid-_r_vo_ [data-look="neo"].node circle{stroke:url(#chatgpt-mermaid-_r_vo_-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#chatgpt-mermaid-_r_vo_ [data-look="neo"].node circle .state-start{fill:#000000;}#chatgpt-mermaid-_r_vo_ [data-look="neo"].icon-shape .icon{fill:url(#chatgpt-mermaid-_r_vo_-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#chatgpt-mermaid-_r_vo_ [data-look="neo"].icon-shape .icon-neo path{stroke:url(#chatgpt-mermaid-_r_vo_-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#chatgpt-mermaid-_r_vo_ .node text{font-size:14px;font-weight:600;letter-spacing:normal;fill:rgb(232, 232, 232);}#chatgpt-mermaid-_r_vo_ .edgeLabels text{font-size:13px;font-weight:600;letter-spacing:-0.08px;fill:rgb(232, 232, 232);}#chatgpt-mermaid-_r_vo_ .node tspan[font-weight="normal"],#chatgpt-mermaid-_r_vo_ .edgeLabels tspan[font-weight="normal"]{font-weight:600;}#chatgpt-mermaid-_r_vo_ .edgeLabel .label rect{opacity:1;rx:13px;ry:13px;fill:rgb(19, 19, 19);stroke:rgb(47, 47, 47);stroke-width:1px;}#chatgpt-mermaid-_r_vo_ .node rect,#chatgpt-mermaid-_r_vo_ .node circle,#chatgpt-mermaid-_r_vo_ .node ellipse,#chatgpt-mermaid-_r_vo_ .node polygon,#chatgpt-mermaid-_r_vo_ .node path{fill:rgb(24, 24, 24);stroke:rgba(255, 255, 255, 0.1);stroke-width:1px;}#chatgpt-mermaid-_r_vo_ .node rect{rx:16px;ry:16px;}#chatgpt-mermaid-_r_vo_ .mermaid-decision .label-container{fill:rgb(19, 19, 19);stroke:rgb(47, 47, 47);stroke-dasharray:2,2;}#chatgpt-mermaid-_r_vo_ .edgePaths .flowchart-link{stroke:rgb(175, 175, 175);stroke-width:1px;stroke-linecap:round;stroke-linejoin:round;}#chatgpt-mermaid-_r_vo_ .marker{fill:rgb(175, 175, 175);stroke:rgb(175, 175, 175);}#chatgpt-mermaid-_r_vo_ :root{--mermaid-font-family:-apple-system-body,ui-sans-serif,-apple-system,system-ui,"Segoe UI",Helvetica,"Apple Color Emoji",Arial,sans-serif,"Segoe UI Emoji","Segoe UI Symbol";}Mugda2 definitions andcontractsExact experimentsLean proof obligationsAgent proposalsProofs and certificatesLean checkingReusable verified results
+
+
+
+
+Your native Mugda implementation can develop alongside this. The shared assets would be the examples, mathematical contracts, intermediate representations, and certificate formats.
+
+There is one subtle requirement: checking the generated Lean theorem does not establish that the frontend translated the intended source statement correctly. Define a small Mugda2 source language with an independent semantics in Lean, and prove refinement against it. This keeps source meaning, generated definitions, and checked claims connected.
+
+For sized recursion, begin with a deliberately restricted fragment that lowers to structural or well-founded recursion with explicit obligations. Your historical pattern-matching counterexample should become a permanent regression example for that translation.
+3. The three abstractions that would make this work
+A. Algorithms whose state includes their memory
+For Cunningham, the state must contain at least
+\[
+s=(\text{basis or policy},\ \text{cyclic cursor}).
+\]
+For broader rules, add their additional memory.
+
+Your existing development already includes a cursor in the simplex state and a last component in the MDP state. That is exactly the right starting point. Family definitions
+
+Mugda2 should make these dependencies visible in the type of an algorithm. A transformation that preserves policies but loses the cursor has not preserved Cunningham’s execution.
+
+I would also distinguish several costs:
+Cost	What it measures
+Pivots or policy switches	The quantity in the current lower-bound theorem
+Candidate inspections	Work performed while scanning for the next improving action
+Arithmetic operations	Exact additions, multiplications, comparisons, and linear algebra
+Bit operations	The cost of manipulating growing rational numerators and denominators
+
+
+These distinctions matter mathematically. A pivot bound is one component of a runtime bound.
+B. Transformations that preserve executions and costs
+The important interface is a simulation theorem. Schematically,
+\[
+R(s,t)\ \land\ s\xrightarrow{c}_A s'
+\quad\Longrightarrow\quad
+\exists t'.\ t\xRightarrow{c'}_B t'\ \land\ R(s',t').
+\]
+Here \(R\) relates states in two representations, and \(c,c'\) describe costs.
+
+For a one-to-one pivot correspondence, require \(c'=c\). For a more general simulation, prove the inequality needed for the intended upper or lower bound.
+
+The contract must cover:
+- Initial states.
+- Improving-action tests.
+- Ordering and history updates.
+- Leaving-variable choices and relevant ties.
+- Terminal states.
+- Cost accounting.
+This would become the common interface for game-to-MDP, MDP-to-LP, rational-to-real, and gadget transformations.
+
+This is also a potentially interesting programming-language contribution: a usable system for expressing and composing algorithm transformations while preserving quantitative behavior.
+C. Symbolic certificates for very long executions
+A theorem about \(2^n\) pivots should not require constructing and checking \(2^n\) individual steps.
+
+Instead, expose the structure of the lower-bound proof:
+- A gadget invariant.
+- A phase-entry condition.
+- A phase-exit condition.
+- A relation between counter states.
+- A recurrence for the number of pivots.
+For example, a certificate might establish
+\[
+T(n+1)\geq 2T(n)+d,
+\]
+with proved base cases and a theorem connecting these phases to legal algorithm executions.
+
+Mugda2 could offer compositional syntax for these certificates. Lean would verify the composition lemmas and induction.
+
+This creates a useful contrast within the application itself: a small generator produces a small instance; that instance induces a very long algorithm execution; a structured proof explains that execution without enumerating it.
+
+Keep the encoding theorem explicit. If
+\[
+\operatorname{pivots}(G(n))\geq 2^{cn},
+\qquad
+\operatorname{bits}(G(n))\leq Cn^d,
+\]
+the resulting lower bound in terms of encoding length is of the form
+\[
+2^{\Omega(\operatorname{bits}(G(n))^{1/d})}.
+\]
+It does not automatically become exponential in the total number of input bits.
+4. How Hofmann, Abel, and Schwichtenberg fit this application
+Their ideas can contribute to different parts of one coherent design.
+Abel: make recursive constructions and proof procedures manageable
+The sized-types component is useful for:
+- Recursively assembling gadget families.
+- Traversing certificates.
+- Constructing bounded execution prefixes.
+- Defining recursive transformations.
+- Expressing structural invariants across higher-order helper functions.
+It should establish that these computations are well-founded.
+
+However, termination and efficiency remain separate obligations. An \(n\)-bit countdown has a compact ranking function and can still take \(2^n-1\) steps. The rank’s description is small; its numerical range is large.
+
+That distinction could become a defining strength of Mugda2: users see separately why a program terminates and what bounds its resource consumption.
+Hofmann: resource annotations and potential functions
+Hofmann’s work with collaborators on automatic amortized analysis provides a concrete model: types carry quantitative information, constraints are generated, and solving those constraints yields resource bounds. Resource Aware ML demonstrates this approach for polynomial resource bounds on first-order functional programs. cs.cmu.edu
+
+For Mugda2, a resource contract might require
+\[
+\operatorname{cost}(s,s')+\Phi(s')\leq\Phi(s).
+\]
+The system could search for \(\Phi\), then produce evidence that the inequality holds.
+
+In the pivot-rule application, related machinery could help find and verify:
+- Transience certificates.
+- Bounds for instance generators.
+- Bounds for certificate checkers.
+- Algebraic inequalities controlling gadget behavior.
+- Perturbation margins.
+The exponential lower-bound proof would still need its own logical structure. Standard upper-bound amortized analysis does not automatically derive it.
+Schwichtenberg: turn constructive mathematics into useful programs
+The natural computational outputs here are:
+- Explicit hard-instance generators.
+- Exact policy evaluators.
+- Transformations between models.
+- Certificate checkers.
+- Procedures that explain a failed invariant.
+Schwichtenberg’s work on extracting programs and identifying computationally irrelevant proof components is directly relevant to making those outputs practical. mathematik.uni-muenchen.de
+
+For this project, maintain an explicit executable construction alongside its correctness theorem. An existential theorem proved with noncomputable machinery does not by itself provide the executable tool you want in the browser.
+Cubical and HoTT ideas
+I would keep these as a later foundational research track.
+
+The hypercubes occurring in unique-sink orientations are finite combinatorial objects; their presence does not require cubical type theory. Moreover, an equivalence between configuration types does not establish preservation of the transition rule, cursor, or cost.
+
+There may eventually be interesting work on transporting structured algorithms and their proofs across equivalences. For the first scientific application, explicit simulations in the existing Lean setting are sufficient and give a much shorter route to results.
+5. The mathematical research program I would prioritize
+I would organize this into a foundation, a first quantitative theorem, and two deeper research directions.
+A. Complete the reusable execution and geometry layer
+These are valuable formalization targets with fairly clear specifications.
+
+First, certify an executable evaluator. For example, an external or Mugda2 implementation can propose a policy-value vector \(v\). A checker verifies
+\[
+(I-P_\pi)v=r_\pi.
+\]
+Under a proved uniqueness condition, this establishes agreement with the abstract policy value. Similar certificates can support basis solutions, reduced costs, and pivot decisions.
+
+This lets you use efficient computation while keeping a simple mathematical checking interface.
+
+Second, formalize rational-to-real transport. The mission explicitly records that its geometry is over rational points and that the real-scalar justification has not yet been turned into a checked transport theorem. Mission scope
+
+There are two related tasks:
+1. Preserve the rationally computed trajectory after embedding coefficients into \(\mathbb R\): determinants, feasibility, reduced-cost signs, ratio comparisons, and cursor updates.
+2. Establish the corresponding real polyhedral statements about vertices, faces, boundedness, and adjacency.
+Third, formalize the direct game-to-simplex connection. Matthew Maat’s recent work gives a direct correspondence between strategy improvement and simplex, under appropriate nondegeneracy assumptions, and connects the geometry with lopsided sets. This is a natural next major known theorem to formalize using the common simulation interface. arxiv.org
+
+These results would make future lower-bound proofs easier to transfer and compare.
+B. First quantitative target: the effective-horizon bound
+The candidate from your earlier plan is particularly attractive because there is a concrete proof route.
+
+Consider a finite maximizing MDP. Let \(P(s,a,t)\) describe transitions among nonterminal states, and let \(m\) be the total number of state-action pairs. Assume exact policy evaluation and strictly improving single-action switches.
+
+Suppose there is a certificate \(w\) and a number \(H\geq1\) such that
+\[
+1\leq w_s\leq H,
+\qquad
+\sum_t P(s,a,t)w_t\leq w_s-1
+\]
+for every state-action pair.
+
+The target is
+\[
+\boxed{
+\operatorname{CunninghamPivots}
+=O\!\left(m^2H\log(2H)\right).
+}
+\]
+Status: I have a plausible proof argument for this precisely specified cyclic algorithm. It is not yet Lean-checked, and I have not established that the statement is new.
+
+The transience certificate itself is established theory: Feinberg–Huang give this kind of characterization and derive complexity bounds for Howard and Dantzig variants. Scherrer develops the nearby contraction-and-action-elimination machinery. The cyclic scheduling argument is the part to isolate and investigate. people.orie.cornell.edu
+
+Here is the proof strategy.
+
+1. Define a sweep correctly.
+
+A sweep means \(m\) consecutive action inspections in cyclic order. It does not mean \(m\) accepted pivots.
+
+Each improving action triggers a switch and exact reevaluation; other actions are skipped.
+
+2. Show that a sweep gives Bellman progress.
+
+If \(v\) is the value vector at the start and \(v'\) at the end, prove
+\[
+v'\geq \mathcal T v,
+\]
+where \(\mathcal T\) is the Bellman optimality operator.
+
+Every action is inspected. At its inspection, either its backup is already below the current value or switching establishes the necessary improvement. Monotonicity preserves that progress through the rest of the sweep.
+
+3. Obtain weighted contraction.
+
+Using
+\[
+\|x\|_w=\max_s\frac{|x_s|}{w_s},
+\]
+the certificate yields contraction factor
+\[
+q=1-\frac1H.
+\]
+Thus each full sweep contracts the optimality error.
+
+4. Turn convergence into finite action elimination.
+
+This is the essential step; contraction alone is insufficient.
+
+At the start of a phase, let
+\[
+e=v^*-v^\pi,
+\qquad
+\eta=\|e\|_w>0.
+\]
+Choose a state attaining the maximum weighted error. Its current action has optimal-value disadvantage at least \(\eta\). Consequently, any policy retaining that action has weighted error at least \(\eta/H\).
+
+After \(O(H\log(2H))\) sweeps, contraction pushes the error below that threshold. That action cannot reappear, because policy values continue improving.
+
+There are at most \(m\) actions to eliminate, and at most \(m\) switches per sweep. This yields the proposed bound.
+
+This is an excellent first Mugda2 benchmark: the drift certificate, sweep semantics, contraction proof, elimination argument, and cost accounting are distinct reusable components.
+
+A further generalization would replace cyclic order by a schedule with a bounded inspection cover time \(B\), aiming at
+\[
+O\!\left(mBH\log(2H)\right).
+\]
+Then your lower-bound formalization becomes useful on the other side. For a family with \(m=O(n)\), combining a \(2^n\) lower bound with this upper bound would force
+\[
+H\log(2H)\geq \frac{2^n}{\operatorname{poly}(n)}.
+\]
+That would precisely connect long executions to the family’s quantitative transience. It would also explain why a bound polynomial in \(H\) can coexist with an exponential lower bound in the construction size.
+C. Larger target: compact realizations of broader hard families
+This is where the recent literature sharpens the ambition.
+
+Disser, Loho, Maat, and Mosis’s STACS 2026 paper already proves lower bounds for broad index-based and ranking-based rule classes. For the index-based result, the LP translation uses doubly exponential coefficients; the authors explicitly identify this as a limitation when interpreting the result in terms of binary input length. drops.dagstuhl.de
+
+Maat’s direct correspondence also discusses this coefficient-growth problem. arxiv.org
+
+A substantive target is therefore:
+For a specified family of adversarial games and a specified rule class, construct polynomial-dimension, polynomial-bit rational LPs that preserve the observations and execution needed for the lower bound.
+
+Mugda2 could help by making each preservation requirement explicit:
+- Which comparisons determine a rule’s behavior?
+- Which numerical inequalities force those comparisons?
+- Which coefficient hierarchies are necessary?
+- Can a large parameter be replaced by a smaller rational witness?
+- Can one prove the replacement uniformly for all family sizes?
+Agents could search for simplified coefficients on small instances, derive candidate symbolic inequalities, and propose a general construction. Lean would check the universal argument.
+
+Focus this project on the new generalized hard families. Large numerical values in the original Cunningham construction do not by themselves imply large binary encodings.
+
+A compact reduction for arbitrary parity or mean-payoff games would have much larger complexity consequences. A carefully chosen family is a more credible initial research target.
+D. Larger target: quantitative robustness of Cunningham lower bounds
+A second strong question is:
+How much can the hard instance change while the long execution remains unavoidable under the specified rule and start?
+
+The desired theorem could look like
+\[
+\|\Delta I\|\leq\varepsilon(n)
+\quad\Longrightarrow\quad
+\operatorname{pivots}(I_n+\Delta I)\geq 2^{cn},
+\]
+with a precise normalization and perturbation model.
+
+The work lies in controlling all decisions along the execution:
+- Signs of actions scanned before the selected action.
+- Positivity of the selected improvement.
+- Leaving-variable comparisons.
+- Feasibility and nonsingularity.
+- Ties and degeneracy.
+- The initial basis and cursor.
+A computable, explicitly bounded small radius would be a good intermediate result. An inverse-polynomial robustness radius in a meaningful normalized model would be substantially more ambitious.
+
+There is already strong nearby work: Christ–Yannakakis prove robust lower bounds for Howard’s policy iteration. A Cunningham-specific result needs to be positioned against that literature, with careful attention to which perturbations are permitted. arxiv.org
+
+For Mugda2, this is a rich application of proof-producing inequality solvers and parameterized certificates.
+E. Later frontier: memory and information available to the rule
+The 2026 ranking-based paper also asks whether its lower bound extends beyond the established small-memory regime. This gives a concrete frontier rather than the vague goal “handle more pivot rules.” Its measure is memory states, which must be distinguished from memory bits. drops.dagstuhl.de
+
+Mugda2 could define a language of controllers whose permitted observations are explicit:
+- Global index rankings.
+- Reduced-cost rankings.
+- Objective-improvement rankings.
+- A bounded internal state.
+- Particular access to history.
+Then one can ask exactly which information or memory allows a controller to escape a construction.
+
+I would leave randomization and genuine network-flow LPs for later. Each requires additional mathematical machinery: an unlucky random trajectory does not establish an expected lower bound, and an MDP-derived LP does not automatically have a network incidence matrix.
+6. What the web UI and LLM agents should actually do
+The most useful interface would let the researcher move between an example, an explanation, and a theorem.
+
+For a selected family size, it could show:
+- The game or MDP graph.
+- The current policy or LP basis.
+- The cursor and candidates scanned.
+- Exact reduced costs or action advantages.
+- The counter phase and relevant invariant.
+- The corresponding Lean statement and proof status.
+For large executions, the user should navigate certified phases rather than wait for every pivot. Selecting a phase would reveal its entry conditions, exit conditions, and proved step count.
+
+A failed experiment should be mathematically informative:
+“The proposed simplification fails at this policy: an earlier action in the cyclic order becomes improving.”
+
+That gives an agent a concrete repair task.
+
+The agent workflow should follow the structure of the research:
+1. Generate candidates: smaller coefficients, modified gadgets, potential functions, perturbation margins.
+2. Run exact experiments: search for counterexamples and minimize failures.
+3. Extract a symbolic hypothesis: identify the invariant that explains the examples.
+4. Prove the hypothesis: produce parameterized lemmas and certificates.
+5. Check and reuse: expose the accepted result as a library theorem.
+The universal proof is the decisive step. Success on many small examples remains experimental evidence.
+
+The useful Lean lessons here are practical: stable libraries, searchable theorem names, fast feedback, structured proof states, reproducible builds, and examples that contributors can modify. Agents should receive exact goals and local contexts, not merely screenshots or prose descriptions.
+
+For Prove2Me, the work naturally decomposes into linked missions such as:
+- Correctness of the executable policy evaluator.
+- Preservation of cursor-aware executions.
+- Rational-to-real run transport.
+- Soundness of a symbolic phase certificate.
+- The fair-sweep lemma.
+- Action elimination and the horizon bound.
+Each mission should have a fixed statement and explicit dependencies, so progress composes.
+7. A realistic ambitious twelve-month plan
+Treat the dates as planning estimates; the exit criteria should govern progress.
+Period	Main work	Concrete exit criterion
+First 4–6 weeks	Export and pin the existing Lean development; define the shared execution and certificate interfaces; build one exact evaluator	A browser example displays a legal pivot with a checked connection to the existing specification
+Months 2–3	Cursor-aware machine semantics, executable refinement, rational-to-real trajectory transport	The same prescribed execution is connected across the relevant representations, with its pivot count preserved
+Months 3–6	Symbolic phase certificates and the effective-horizon theorem	An all-\(n\) lower-bound argument can be reused through the certificate interface; the cyclic upper bound is proved or its precise obstruction is understood
+Months 6–9	Choose compact realization or robustness as the main frontier	A precise new candidate theorem, a documented comparison with prior work, and evidence supporting the general construction
+Months 9–12	Complete the strongest result; package the library, workbench, and language contribution	A reusable system and a submission-quality account of the mathematical or programming-language advance
+
+
+I would run one primary open mathematical problem at a time, while agents work on independent supporting lemmas and experiments.
+
+The project could produce three distinct contributions:
+1. A formalization contribution: reusable, checked mathematics spanning games, policy iteration, simplex, and geometry.
+2. A programming-language contribution: a practical way to combine sized constructions, quantitative contracts, executable witnesses, and compositional certificates.
+3. A new complexity result: for example, a stronger realization theorem, a Cunningham robustness theorem, or a precisely scoped scheduling bound.
+All three are legitimate research outcomes. The third requires a new mathematical statement; the first two should be evaluated on their own merits.
+8. The first milestone I would choose
+I would start with this:
+Given a parameterized hard family, Mugda2 generates an exact instance, explains its cursor-aware execution, and produces a Lean-checked symbolic certificate for its lower bound. The same framework accepts a transience certificate and supports the proof of a quantitative upper bound.
+
+That milestone ties your projects together unusually well.
+
+It forces Mugda2 to handle the distinctions that matter: construction size, termination, execution length, representation changes, and computational evidence. It gives the web UI something mathematically substantial to explain. It gives agents tightly specified tasks. And it creates the infrastructure needed to investigate the coefficient-size and robustness questions.
+
+My priority would be: executable refinement and symbolic certificates first; the effective-horizon theorem next; compact realizations or robustness as the main frontier. That gives Mugda2 a clear scientific purpose while preserving room for the deeper type-theoretic ideas you want to explore.

@@ -1,0 +1,375 @@
+I would give Mugda2 a clear identity: a constructive programming language that produces executable programs together with understandable, independently checked guarantees about correctness, termination, productivity, and resource use.
+
+That gives Hofmann, Abel, Schwichtenberg, Lean, and potentially cubical type theory distinct roles in one coherent project:
+Influence	What I would take into Mugda2
+Andreas Abel	Compositional termination and productivity, sizes, copatterns, normalization, and principled elaboration
+Martin Hofmann	Quantitative resource analysis, careful treatment of computational resources, and a serious semantic account of equality
+Helmut Schwichtenberg	Extracting useful algorithms from constructive proofs, identifying computationally irrelevant material, and reasoning about infinite computations
+Lean	A small checking core, powerful elaboration and tactics, immediate editor feedback, reusable libraries, and disciplined development infrastructure
+Cubical/HoTT	Computational reasoning about equality and equivalence, with a foundation that supports richer identity types
+
+
+The distinctive opportunity is the connection between these ideas. For example: construct a stream-processing algorithm from a proof, establish its productivity, derive how much input it needs for the first \(n\) outputs, bound its work, and let a human or an LLM agent inspect and improve the entire argument.
+
+That could be a compelling successor to your thesis.
+
+A note about the repository: the public main I could inspect is the historical Haskell tree at fc355879. I did not find your new web UI there, so the implementation recommendations below are grounded in that tree and treat your modernization as ongoing.
+1. Give Mugda2 one main research question
+I would organize the project around:
+How can we make constructive programs with termination, productivity, and quantitative guarantees pleasant to write, inspect, and synthesize?
+
+This is broad enough to sustain interesting research, but specific enough to guide feature choices.
+
+A Mugda2 user should be able to ask:
+- Does this program satisfy its specification?
+- Why does this recursive call make progress?
+- Why will this stream produce another observation?
+- How much input must be inspected to produce a requested output?
+- Which parts of the proof survive in the executable?
+- What resource bound has actually been established?
+- Can an agent complete the missing argument without changing my specification?
+The system should answer these questions from structured checking information. An LLM can explain that information, search for missing evidence, or propose a better program.
+
+I would make the explanation of guarantees a central product feature. It connects your original interest in termination with something that can distinguish Mugda2 as a usable system.
+A particularly good demonstration: quantitative stream processing
+Imagine a library for exact real arithmetic or productive stream transformations.
+
+For a transformation \(F\), Mugda2 could expose three different contracts:
+\[
+\begin{aligned}
+\text{Correctness:}\quad & F \text{ implements the intended mathematical operation},\\
+\text{Input demand:}\quad & n \text{ output observations require at most } L(n)
+    \text{ input observations},\\
+\text{Resource use:}\quad & \text{producing those outputs costs at most } C(n)
+    \text{ in a specified cost model}.
+\end{aligned}
+\]
+These are different claims. Ordinary productivity establishes that each finite observation can be obtained; it does not automatically supply a useful \(L(n)\) or \(C(n)\).
+
+There is a direct Schwichtenberg connection here. Köpp and Schwichtenberg’s work on lookahead analysis in exact real arithmetic incorporates input demand into specifications and carries it through proofs to extracted programs. epub.ub.uni-muenchen.de
+
+For suitable monotone lookahead contracts, composition could come with a theorem of the form
+\[
+L_{G\circ F}(n)\leq L_F(L_G(n)).
+\]
+A resource theorem would additionally account for the evaluator, sharing, intermediate storage, and the cost of composition. Making those contracts compose predictably would be a substantive research contribution.
+
+My preferred first substantial example would be a small verified stream library, culminating in an exact-real operation. A finite example such as verified sorting would provide a simpler earlier milestone.
+2. Build a small checking core and an ambitious frontend
+This is the most valuable architectural lesson I would take from Lean.
+
+Lean elaborates convenient source syntax into a much smaller core language. Its kernel rechecks the result; unification and its syntactic recursion machinery are outside that kernel. Recursive definitions are translated into primitive recursors. lean-lang.org
+
+For Mugda2, I would aim for this architecture:
+#chatgpt-mermaid-_r_107_{font-family:-apple-system-body,ui-sans-serif,-apple-system,system-ui,"Segoe UI",Helvetica,"Apple Color Emoji",Arial,sans-serif,"Segoe UI Emoji","Segoe UI Symbol";font-size:16px;fill:rgb(237, 237, 237);}@keyframes edge-animation-frame{from{stroke-dashoffset:0;}}@keyframes dash{to{stroke-dashoffset:0;}}#chatgpt-mermaid-_r_107_ .edge-animation-slow{stroke-dasharray:9,5!important;stroke-dashoffset:900;animation:dash 50s linear infinite;stroke-linecap:round;}#chatgpt-mermaid-_r_107_ .edge-animation-fast{stroke-dasharray:9,5!important;stroke-dashoffset:900;animation:dash 20s linear infinite;stroke-linecap:round;}#chatgpt-mermaid-_r_107_ .error-icon{fill:rgb(48, 48, 48);}#chatgpt-mermaid-_r_107_ .error-text{fill:rgb(237, 237, 237);stroke:rgb(237, 237, 237);}#chatgpt-mermaid-_r_107_ .edge-thickness-normal{stroke-width:1px;}#chatgpt-mermaid-_r_107_ .edge-thickness-thick{stroke-width:3.5px;}#chatgpt-mermaid-_r_107_ .edge-pattern-solid{stroke-dasharray:0;}#chatgpt-mermaid-_r_107_ .edge-thickness-invisible{stroke-width:0;fill:none;}#chatgpt-mermaid-_r_107_ .edge-pattern-dashed{stroke-dasharray:3;}#chatgpt-mermaid-_r_107_ .edge-pattern-dotted{stroke-dasharray:2;}#chatgpt-mermaid-_r_107_ .marker{fill:rgb(175, 175, 175);stroke:rgb(175, 175, 175);}#chatgpt-mermaid-_r_107_ .marker.cross{stroke:rgb(175, 175, 175);}#chatgpt-mermaid-_r_107_ svg{font-family:-apple-system-body,ui-sans-serif,-apple-system,system-ui,"Segoe UI",Helvetica,"Apple Color Emoji",Arial,sans-serif,"Segoe UI Emoji","Segoe UI Symbol";font-size:16px;}#chatgpt-mermaid-_r_107_ p{margin:0;}#chatgpt-mermaid-_r_107_ .label{font-family:-apple-system-body,ui-sans-serif,-apple-system,system-ui,"Segoe UI",Helvetica,"Apple Color Emoji",Arial,sans-serif,"Segoe UI Emoji","Segoe UI Symbol";color:rgb(237, 237, 237);}#chatgpt-mermaid-_r_107_ .cluster-label text{fill:rgb(237, 237, 237);}#chatgpt-mermaid-_r_107_ .cluster-label span{color:rgb(237, 237, 237);}#chatgpt-mermaid-_r_107_ .cluster-label span p{background-color:transparent;}#chatgpt-mermaid-_r_107_ .label text,#chatgpt-mermaid-_r_107_ span{fill:rgb(237, 237, 237);color:rgb(237, 237, 237);}#chatgpt-mermaid-_r_107_ .node rect,#chatgpt-mermaid-_r_107_ .node circle,#chatgpt-mermaid-_r_107_ .node ellipse,#chatgpt-mermaid-_r_107_ .node polygon,#chatgpt-mermaid-_r_107_ .node path{fill:rgb(19, 33, 54);stroke:rgb(31, 78, 148);stroke-width:1px;}#chatgpt-mermaid-_r_107_ .rough-node .label text,#chatgpt-mermaid-_r_107_ .node .label text,#chatgpt-mermaid-_r_107_ .image-shape .label,#chatgpt-mermaid-_r_107_ .icon-shape .label{text-anchor:middle;}#chatgpt-mermaid-_r_107_ .node .katex path{fill:#000;stroke:#000;stroke-width:1px;}#chatgpt-mermaid-_r_107_ .rough-node .label,#chatgpt-mermaid-_r_107_ .node .label,#chatgpt-mermaid-_r_107_ .image-shape .label,#chatgpt-mermaid-_r_107_ .icon-shape .label{text-align:center;}#chatgpt-mermaid-_r_107_ .node.clickable{cursor:pointer;}#chatgpt-mermaid-_r_107_ .root .anchor path{fill:rgb(175, 175, 175)!important;stroke-width:0;stroke:rgb(175, 175, 175);}#chatgpt-mermaid-_r_107_ .arrowheadPath{fill:rgb(175, 175, 175);}#chatgpt-mermaid-_r_107_ .edgePath .path{stroke:rgb(175, 175, 175);stroke-width:1px;}#chatgpt-mermaid-_r_107_ .flowchart-link{stroke:rgb(175, 175, 175);fill:none;}#chatgpt-mermaid-_r_107_ .edgeLabel{background-color:rgb(14, 14, 14);text-align:center;}#chatgpt-mermaid-_r_107_ .edgeLabel p{background-color:rgb(14, 14, 14);}#chatgpt-mermaid-_r_107_ .edgeLabel rect{opacity:0.5;background-color:rgb(14, 14, 14);fill:rgb(14, 14, 14);}#chatgpt-mermaid-_r_107_ .labelBkg{background-color:rgba(14, 14, 14, 0.5);}#chatgpt-mermaid-_r_107_ .cluster rect{fill:rgb(48, 48, 48);stroke:rgba(255, 255, 255, 0.15);stroke-width:1px;}#chatgpt-mermaid-_r_107_ .cluster text{fill:rgb(237, 237, 237);}#chatgpt-mermaid-_r_107_ .cluster span{color:rgb(237, 237, 237);}#chatgpt-mermaid-_r_107_ div.mermaidTooltip{position:absolute;text-align:center;max-width:200px;padding:2px;font-family:-apple-system-body,ui-sans-serif,-apple-system,system-ui,"Segoe UI",Helvetica,"Apple Color Emoji",Arial,sans-serif,"Segoe UI Emoji","Segoe UI Symbol";font-size:12px;background:rgb(48, 48, 48);border:1px solid rgba(255, 255, 255, 0.15);border-radius:2px;pointer-events:none;z-index:100;}#chatgpt-mermaid-_r_107_ .flowchartTitleText{text-anchor:middle;font-size:18px;fill:rgb(237, 237, 237);}#chatgpt-mermaid-_r_107_ rect.text{fill:none;stroke-width:0;}#chatgpt-mermaid-_r_107_ .icon-shape,#chatgpt-mermaid-_r_107_ .image-shape{background-color:rgb(14, 14, 14);text-align:center;}#chatgpt-mermaid-_r_107_ .icon-shape p,#chatgpt-mermaid-_r_107_ .image-shape p{background-color:rgb(14, 14, 14);padding:2px;}#chatgpt-mermaid-_r_107_ .icon-shape .label rect,#chatgpt-mermaid-_r_107_ .image-shape .label rect{opacity:0.5;background-color:rgb(14, 14, 14);fill:rgb(14, 14, 14);}#chatgpt-mermaid-_r_107_ .label-icon{display:inline-block;height:1em;overflow:visible;vertical-align:-0.125em;}#chatgpt-mermaid-_r_107_ .node .label-icon path{fill:currentColor;stroke:revert;stroke-width:revert;}#chatgpt-mermaid-_r_107_ .node .neo-node{stroke:rgb(31, 78, 148);}#chatgpt-mermaid-_r_107_ [data-look="neo"].node rect,#chatgpt-mermaid-_r_107_ [data-look="neo"].cluster rect,#chatgpt-mermaid-_r_107_ [data-look="neo"].node polygon{stroke:url(#chatgpt-mermaid-_r_107_-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#chatgpt-mermaid-_r_107_ [data-look="neo"].swimlane.cluster rect{filter:none;}#chatgpt-mermaid-_r_107_ [data-look="neo"].node path{stroke:url(#chatgpt-mermaid-_r_107_-gradient);stroke-width:1px;}#chatgpt-mermaid-_r_107_ [data-look="neo"].node .outer-path{filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#chatgpt-mermaid-_r_107_ [data-look="neo"].node .neo-line path{stroke:rgb(31, 78, 148);filter:none;}#chatgpt-mermaid-_r_107_ [data-look="neo"].node circle{stroke:url(#chatgpt-mermaid-_r_107_-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#chatgpt-mermaid-_r_107_ [data-look="neo"].node circle .state-start{fill:#000000;}#chatgpt-mermaid-_r_107_ [data-look="neo"].icon-shape .icon{fill:url(#chatgpt-mermaid-_r_107_-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#chatgpt-mermaid-_r_107_ [data-look="neo"].icon-shape .icon-neo path{stroke:url(#chatgpt-mermaid-_r_107_-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#chatgpt-mermaid-_r_107_ .node text{font-size:14px;font-weight:600;letter-spacing:normal;fill:rgb(232, 232, 232);}#chatgpt-mermaid-_r_107_ .edgeLabels text{font-size:13px;font-weight:600;letter-spacing:-0.08px;fill:rgb(232, 232, 232);}#chatgpt-mermaid-_r_107_ .node tspan[font-weight="normal"],#chatgpt-mermaid-_r_107_ .edgeLabels tspan[font-weight="normal"]{font-weight:600;}#chatgpt-mermaid-_r_107_ .edgeLabel .label rect{opacity:1;rx:13px;ry:13px;fill:rgb(19, 19, 19);stroke:rgb(47, 47, 47);stroke-width:1px;}#chatgpt-mermaid-_r_107_ .node rect,#chatgpt-mermaid-_r_107_ .node circle,#chatgpt-mermaid-_r_107_ .node ellipse,#chatgpt-mermaid-_r_107_ .node polygon,#chatgpt-mermaid-_r_107_ .node path{fill:rgb(24, 24, 24);stroke:rgba(255, 255, 255, 0.1);stroke-width:1px;}#chatgpt-mermaid-_r_107_ .node rect{rx:16px;ry:16px;}#chatgpt-mermaid-_r_107_ .mermaid-decision .label-container{fill:rgb(19, 19, 19);stroke:rgb(47, 47, 47);stroke-dasharray:2,2;}#chatgpt-mermaid-_r_107_ .edgePaths .flowchart-link{stroke:rgb(175, 175, 175);stroke-width:1px;stroke-linecap:round;stroke-linejoin:round;}#chatgpt-mermaid-_r_107_ .marker{fill:rgb(175, 175, 175);stroke:rgb(175, 175, 175);}#chatgpt-mermaid-_r_107_ :root{--mermaid-font-family:-apple-system-body,ui-sans-serif,-apple-system,system-ui,"Segoe UI",Helvetica,"Apple Color Emoji",Arial,sans-serif,"Segoe UI Emoji","Segoe UI Symbol";}Web editor and LSPElaboration and proof searchLLM agentsGoals and snapshot APIExplicit core terms andevidenceCore checkerChecked modulesExtraction and executionGoals, constraints andexplanations
+
+
+
+
+The important boundary is between constructing a candidate and accepting a declaration.
+What belongs in the initial core
+I would start with an explicitly specified dependent calculus containing:
+- A predicative hierarchy of universes.
+- Dependent functions and pairs.
+- A small initial collection of inductive types.
+- Intensional identity and its eliminator.
+- Explicit eliminators or well-typed case trees.
+- Precisely specified conversion.
+- Explicit relevance information where erasure depends on it.
+General inductive families, codata, and native sized recursion should be added with their particular checking and semantic obligations.
+
+The core should not need to infer implicit arguments, guess sizes, search for lemmas, or interpret natural-language explanations. Those are frontend services.
+
+A small checker does not itself establish soundness: an incorrect sized-recursion rule remains incorrect in a small implementation. The advantage is that the rules and the code enforcing them become inspectable.
+There are two approaches to recursion—and they have different costs
+Approach A: elaborate recursion into existing recursors or well-founded induction.
+
+This gives the strongest separation between clever termination search and the trusted core. The output is an ordinary term whose validity can be checked.
+
+The difficulty is preserving convenient computation rules and supporting the full range of sized and corecursive programs you want.
+
+Approach B: give the core an explicit sized-recursion rule.
+
+This can better preserve the programming style and computational behavior that make Mugda interesting. But that rule, its admissibility conditions, and its interaction with conversion become part of the foundational work.
+
+I would initially establish a reliable recursor-based fragment and develop native sized rules against it. I would decide which programs require the additional rule before expanding the core.
+One concrete improvement suggested by your current public source
+In the historical implementation, typeCheckFuns installs provisional function entries and later enables them. Some admissibility failures print a message; the terminationCheck entry point similarly reports failure through output.
+
+For Mugda2, I would make this invariant explicit:
+A declaration enters the checked environment only after every required obligation succeeds.
+
+Provisional declarations are still needed for mutual checking, but they should have a different internal status and interface from accepted declarations.
+
+This is an excellent early agent task: the intended behavior is precise, the code boundary is identifiable, and regression tests can verify it.
+3. Make Abel’s later work a major design reference
+There are three developments I would study closely before deciding Mugda2’s internal language.
+Dependent patterns should elaborate into explicit case trees
+Cockx and Abel’s “Elaborating Dependent (Co)pattern Matching” addresses a crucial issue: whether the generated core program faithfully represents the equations the user wrote. It develops well-typed case trees and proves preservation of the source clauses’ first-match semantics. ICFP 2018
+
+This is especially relevant to Mugda’s history.
+
+There are two questions to answer:
+1. Does the generated core term have the claimed type?
+2. Does it implement the source definition the user intended?
+A successful core check answers the first. It does not automatically answer the second.
+
+I would therefore make pattern elaboration an explicit subsystem, with source mappings and inspectable refinements. A user should be able to click a branch and see:
+- Which indices were refined.
+- Which equalities were introduced.
+- Which size inequalities are available.
+- Why an inaccessible pattern is justified.
+- Why a recursive call is accepted.
+That information would also be extremely useful to agents.
+Use observations and copatterns for infinite objects
+Abel and Pientka’s work on well-founded recursion with copatterns and sized types gives a semantic treatment of finite and infinite structures through patterns and observations. Its normalization result has a specific core-language scope, rather than covering an arbitrary combination of dependent and cubical features. Cambridge Core
+
+For Mugda2, I would make definitions by observations natural in the surface language. Illustrative syntax could look like:
+def map (f : A -> B) (xs : Stream A) : Stream B where
+  .head = f xs.head
+  .tail = map f xs.tail
+
+The elaborator would produce the explicit evidence required by the chosen productivity discipline.
+
+Conversion should compute finite observations. It should not attempt to normalize an entire infinite stream. Equality of infinite objects belongs in a suitable propositional reasoning principle, such as bisimulation, rather than unrestricted automatic comparison.
+Use a specified normalization algorithm
+Abel, Vezzosi, and Winterhalter’s “Normalization by Evaluation for Sized Dependent Types” is particularly relevant to sizes, relevance, subtyping, and equality. It distinguishes forms of size abstraction and establishes decidability results for its stated calculus. publications.lib.chalmers.se
+
+I would use it as a reference implementation target for a restricted fragment.
+
+That would make “normalization by evaluation” a concrete engineering and proof commitment: evaluator, semantic values, quotation, and equality all implementing the same specified theory. Extending that theory would require revisiting the corresponding argument.
+A current research opportunity: large sizes
+The July 2026 paper “Constructing (Co)inductive Types via Large Sizes”, by Laarakker, Otten, and van den Berg, is unusually relevant. It replaces the problematic largest-size approach with large sizes and parametric quantification, and provides a consistency model supporting infinite branching. drops.dagstuhl.de
+
+However, its conclusion leaves significant implementation questions open: computational behavior for parametricity, a suitable computational fixpoint rule, and handling size inequalities beyond a decidable fragment. Combining the model with univalence is also future work. drops.dagstuhl.de
+
+That suggests a sharp research project for Mugda2:
+Develop a computationally tractable elaborator for a carefully chosen fragment of parametric sized types, with automatic simple constraints and explicit evidence for the difficult cases.
+
+That would be a credible attempt at advancing the state of the art. It is also a project where agents could help with implementation, formalization, examples, and counterexample search while you retain control of the theory.
+4. Combine Hofmann’s resource analysis with Schwichtenberg’s extraction
+These two directions fit together especially well.
+Resource contracts should describe the executable computation
+Hofmann’s resource-analysis tradition suggests optional contracts for quantities such as:
+- Abstract evaluation steps.
+- Allocation.
+- Comparisons.
+- Input observations.
+- Available potential for future work.
+For example, Resource Aware ML, by Hoffmann, Aehlig, and Hofmann, implements amortized analysis that infers polynomial resource bounds for a first-order functional language. That is a useful precedent for choosing a manageable initial fragment. cs.cmu.edu
+
+For Mugda2, I would begin with one well-defined metric—perhaps explicit cost ticks or constructor allocations—and a restricted executable language.
+
+A solver or an LLM could propose potential annotations. A checker would validate the resulting derivation or certificate.
+
+Keep these judgments separate:
+\[
+\text{terminates},\qquad
+\text{output size is bounded},\qquad
+\text{execution cost is bounded}.
+\]
+They can exchange proved information, but none of them should silently stand in for another.
+
+Likewise, a bound in an abstract cost semantics is not automatically a bound on wall-clock time or the memory behavior of an optimizing backend.
+Extraction should be an inspectable transformation
+From Schwichtenberg, I would take the idea that the computational content of a proof deserves its own careful treatment.
+
+Ratiu and Schwichtenberg’s “Decorating Proofs” studies how to identify computationally irrelevant quantified variables and premises. The relevance choices can materially affect the complexity of extracted programs. mathematik.uni-muenchen.de
+
+Mugda2 could expose:
+1. The specification.
+2. The checked proof or program.
+3. Its relevance annotations.
+4. The extracted executable.
+5. The statement connecting that executable to the specification.
+For a simple constructive specification, the user might write something schematically like:
+def sort (xs : List A) :
+  Σ ys : List A, Sorted ys × Permutation xs ys
+
+The executable returns the sorted list. The correctness evidence need not all remain at runtime, provided the erasure rules justify removing it.
+
+The difficult point is that dependency and erasure interact. A variable cannot be erased merely because a user or agent marks it uninteresting. The computation must be prevented from depending on it in ways that invalidate erasure.
+
+I would initially extract to a small intermediate language with clear semantics. That gives you a realistic target for an extraction-correctness argument before introducing a sophisticated compiler.
+A later extension: affine use and storage reuse
+Hofmann’s work also makes an optional affine or resource-sensitive executable fragment attractive: predictable sharing, controlled duplication, and justified storage reuse.
+
+I would add this after the first extraction and cost-analysis results. Full linear dependency, sized recursion, and cubical equality together would create too many interacting obligations for an initial core.
+5. Cubical and HoTT are plausible—but require an early equality decision
+I would preserve a serious route toward cubical type theory. I would also make the relevant choice now, while modernizing the core.
+Your k.ma is an excellent architectural test
+The historical repository includes examples/k.ma, explicitly defining axiom K by matching on equality.
+
+I have inspected the file, not executed it. Its presence nevertheless identifies an intended use of the old pattern language.
+
+For a HoTT-oriented Mugda2, unrestricted K for general identity types cannot remain an implicit consequence of pattern matching. Agda’s --without-K documentation illustrates that this requires restrictions on case splitting, and also interacts with termination checking and universe levels. Agda 2.10.0 documentation
+
+My initial choices would be:
+- Intensional identity with \(J\).
+- No global assumption of uniqueness of identity proofs.
+- Pattern elaboration that produces valid eliminations under that equality theory.
+- Explicit assumptions when a development needs set-level uniqueness.
+- A separate, deliberate design if strict equality is later introduced.
+Disabling k.ma would be a useful regression expectation; it would not, by itself, establish that the new equality theory is correct.
+Hofmann provides a natural connection here
+Hofmann and Streicher’s groupoid interpretation of type theory established a model with nontrivial identity types. It is a meaningful connection between the tradition you named and the later homotopical view of equality. Homotopy Type Theory
+
+That suggests treating equality as a central design question rather than a convenience added to the type checker.
+Learn from Lean’s engineering while choosing Mugda2’s own equality theory
+Lean’s Prop has definitional proof irrelevance, runtime erasure, and restricted elimination. Those choices are important to Lean’s particular logic. lean-lang.org
+
+Mugda2 can adopt Lean’s interaction and elaboration techniques while retaining proof-relevant identity/path types where its theory requires them. A proof-irrelevant class of propositions may still be useful; the key is not to identify all general paths with that class.
+What cubical would add
+A computational cubical extension could support:
+- Paths and transport with specified computation.
+- Univalence.
+- Later, selected higher inductive types.
+- More direct reasoning across equivalent representations.
+- Useful relationships between behavioral equality and paths.
+These features affect contexts, evaluation, conversion, universes, and elimination. They need a selected calculus. For example, Sterling and Angiuli’s normalization result concerns a particular univalent Cartesian cubical theory. arxiv.org
+
+There is also an interesting alternative based on guarded cubical type theory. Work on “Greatest HITs” combines multi-clocked guarded recursion with cubical features and gives semantics for the combination. It is relevant if coinductive structures and richer equality become the main research direction. arxiv.org
+
+Clocks and sizes are different mechanisms. I would select one foundational account of corecursion for a given core rather than provide two unrestricted ways to bypass the same obligation.
+My recommendation
+Build the first dependable Mugda2 core without global K, and make cubical support a separately specified development with explicit compatibility requirements.
+
+If computational HoTT becomes your primary goal, choose a cubical core early and accept that the sized layer becomes a significant research project on top of it.
+
+Also keep one distinction visible: transporting functional correctness across an equivalence does not automatically transport operational cost bounds. Two equivalent implementations may have very different allocation or running-time behavior.
+6. Take the practical lessons from Lean seriously
+A language can have excellent foundations and still be difficult to use. These are the Lean features I would prioritize.
+Lesson	Mugda2 application
+Strong elaboration	Infer ordinary arguments, reconstruct routine sizes, and expose precise obligations when inference stops
+Proof-producing automation	Simplification, rewriting, induction, coinduction, and size/resource solvers produce checkable results
+Continuous editor feedback	Show the context and goal at the cursor, with cancellation and incremental checking
+A reusable library	Canonical definitions and lemmas for the project’s chosen domain
+Integrated project tooling	One way to build, test, document, and reproduce a project
+Contribution discipline	Small reviewable changes, consistent APIs, executable documentation, and clear acceptance criteria
+
+
+Lean’s elaboration metadata connects source positions to types, proof states, and generated core expressions. I would build an equivalent information structure into Mugda2’s frontend early, because it serves the editor, explanations, and agents simultaneously. lean-lang.org
+
+Lake provides integrated building, dependency management, tests, and other workflows. Mugda2 does not need to reproduce all of Lake, but it would benefit from the same expectation that a checked project is reproducible. lean-lang.org
+
+Mathlib’s contribution process also supplies a useful model: shared naming and documentation conventions, automated checks, and maintainer review. My lesson from that is to invest in a coherent small library before accumulating many disconnected examples. leanprover-community.github.io
+
+For Mugda2, that library could initially cover finite collections, indexed collections, orders, recursion principles, streams, stream processors, and one exact-real development.
+
+I would postpone self-hosting and a large metaprogramming language. A stable checking API and a few useful tactics would deliver value much earlier.
+7. Make the web UI a view into the proof process
+Your web UI could become a substantial part of the project’s identity.
+
+I would organize the experience around the source and the current obligation. Depending on the cursor position, the side panel would show:
+View	What the user sees
+Goal	Expected type, local variables, available hypotheses
+Pattern refinement	Index equalities, inaccessible-pattern justification, coverage information
+Termination/productivity	Relevant recursive call, size constraints, and remaining obligations
+Resources	The stated metric, inferred bound, and proof status
+Extraction	The executable program and which material was erased
+
+
+Lean’s ProofWidgets demonstrates the usefulness of specialized displays and interactive proof operations beyond a plain text goal panel. reservoir.lean-lang.org
+
+For Mugda2, a particularly good interaction would be:
+1. Click a recursive call.
+2. See the relation the checker needs.
+3. Expand the facts available from the surrounding patterns.
+4. Ask an agent to propose a lemma or revised annotation.
+5. Inspect the proposed edit.
+6. Recheck the resulting declaration.
+The acceptance state should come from the checker. The agent’s prose is an explanation of that state.
+
+A failed analysis should say what remains unproved. A timeout should remain a timeout; it is neither a proof of divergence nor a completed verification.
+Build the UI and agents on the same information
+I would expose a versioned service with operations such as:
+- checkDocument
+- getGoals
+- getConstraints
+- explainObligation
+- tryCandidate
+- normalizeWithBudget
+- recheckCore
+Document revisions and immutable environment snapshots matter. An agent should not solve a goal from an old revision and have the result silently applied to a different context.
+
+Keep the checker service independent of the web framework. That allows the web editor, a command-line interface, an LSP client, and agents to share the same behavior.
+8. Use agents in two distinct ways
+Agents helping people use Mugda2
+These agents can:
+- Search the library.
+- Suggest constructions or proof steps.
+- Propose termination measures.
+- Infer candidate size and potential annotations.
+- Repair failed elaboration.
+- Explain a generated case tree.
+- Search several alternatives from the same snapshot.
+Pantograph’s design is relevant here: it distinguishes the polished presentation of a proof from the state needed for proof search. An editor protocol alone is not necessarily a good interface for branching, backtracking search. GitHub
+
+I would therefore support explicit search snapshots and candidate checking, rather than making agents repeatedly edit whole files and parse terminal output.
+
+The candidate must solve the original formal obligation. Checking a proof does not establish that the human’s intended specification was formalized correctly, so the specification and any changes to it should remain visible.
+Agents helping you build Mugda2
+This is where LLM assistance can make the project much more feasible, provided the work has clear contracts.
+Work package	Agent contribution	Acceptance criterion
+Modern build and packaging	Toolchain updates, library/CLI split, CI	Reproducible build and classified example outcomes
+Diagnostics and editor service	Source spans, protocol, incremental feedback	Correct source mapping and stable revision behavior
+Pattern elaboration	Candidate case-tree translation	Core rechecking and source-semantics tests
+Size/resource inference	Constraint generation and candidate evidence	Independent checking of the evidence
+Counterexample search	Generated and minimized difficult programs	Reproducible failures, with expected outcomes reviewed
+Formalization	Definitions, lemmas, proof attempts	Checked results about the actual stated calculus
+Library development	Examples, reusable lemmas, tutorials	Reviewed APIs and fully checked dependencies
+
+
+You should remain the owner of the language’s invariants and foundational choices.
+
+An agent implementing a rule and another agent agreeing with it is useful review, but not a substitute for a semantic argument. Similarly, testing a checker and proving an idealized calculus address different risks; the implementation must correspond to the calculus.
+Make the historical examples a permanent asset
+Your repository already contains cases such as loop.ma, loop2.ma, and eqSize.ma.
+
+I would classify them by intended outcome and reason, rather than assuming that every historical file should pass or that every file named “bad” is an established exploit.
+
+Then have agents generate variants involving renamed binders, hidden indices, additional abstraction, and nested patterns. These variations can test whether the implementation respects semantic invariants rather than accidental syntax.
+9. A development sequence I would actually recommend
+I would use acceptance milestones rather than promise a date for solving the research questions.
+Milestone 1: a dependable modernization
+Produce a modern Haskell library and CLI, structured diagnostics, an example manifest, and explicit handling of failed obligations.
+
+Completion condition: every example has an understood status, and unsuccessful checking cannot create an accepted declaration.
+
+Your existing separation into syntax, scope checking, values, typing, positivity, and termination provides useful boundaries. I would preserve that knowledge while improving the interfaces.
+Milestone 2: a documented core and independent rechecking
+Specify the supported types, equality, reduction, relevance, and declaration rules. Have elaboration emit an explicit representation.
+
+Completion condition: an emitted module can be rechecked without rerunning elaboration or trusting its previous success flag.
+Milestone 3: an interactive environment for people and agents
+Connect the web UI to goals, snapshots, diagnostics, and structured constraints. Add a small set of proof-producing tactics.
+
+Completion condition: both a human and an agent can complete the same example using the same checking service.
+Milestone 4: one rigorous sized-programming fragment
+Choose a precise initial calculus or translation. Establish pattern behavior, size constraints, recursion rules, and conversion for that fragment.
+
+Completion condition: the supported examples and known counterexamples have principled outcomes, backed by the stated metatheory.
+Milestone 5: extraction plus one quantitative guarantee
+Extract executable witnesses and add either input-demand contracts or a simple amortized resource analysis.
+
+Completion condition: one nontrivial development connects its specification, extracted program, and quantitative contract.
+
+I would aim for a stream or exact-real example here.
+Milestone 6: choose the next research direction from evidence
+At that point, select one major extension:
+- More expressive parametric sized types.
+- Computational cubical equality.
+- Stronger resource inference.
+- A richer extracted-program backend.
+- More effective interactive synthesis.
+The choice should follow an example that the existing system cannot express or verify satisfactorily.
+The direction I would choose for you
+I would pursue three immediate commitments:
+1. A small, explicit core with no global K and a clear relevance policy.
+2. Exceptional support for explaining and checking recursive and corecursive programs.
+3. Extraction with quantitative contracts, developed through one coherent example library.
+Alongside that, I would maintain a focused research development on the newer parametric-size ideas, with cubical compatibility treated as an explicit theoretical objective.
+
+The most compelling demonstration would be a session in which a user states a constructive specification, an agent proposes an implementation, Mugda2 identifies the remaining obligations, the user and agent complete them, and the system produces an executable together with checked correctness, productivity, input-demand, and resource information.
+
+That is the Mugda2 I would build: a system where the computational meaning of a proof—and the guarantees attached to its execution—are unusually clear.
