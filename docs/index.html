@@ -48,8 +48,8 @@
 <header class="topbar">
   <a class="brand" href="#top" aria-label="Mugda2 guide home"><span class="brand-mark" aria-hidden="true">m</span><strong>Mugda<span aria-hidden="true">₂</span><span class="sr-only" hidden>2</span></strong><span>A guide to the ideas</span></a>
   <nav class="topnav" aria-label="Project links">
-    <a href="../REQUIREMENTS.md">Requirements</a>
-    <a class="optional" href="../MILESTONES.md">Roadmap</a>
+    <a href="https://github.com/kmehltretter82/mugda2/blob/main/REQUIREMENTS.md">Requirements</a>
+    <a class="optional" href="https://github.com/kmehltretter82/mugda2/blob/main/MILESTONES.md">Roadmap</a>
     <a class="optional" href="https://github.com/kmehltretter82/mugda2">GitHub ↗</a>
     <button class="plain-button" id="print-guide" type="button" hidden>Print</button>
   </nav>
@@ -243,7 +243,7 @@ rewrite (branch children) =
           </div>
           <p>Equality alone is not a cost theorem. Two implementations can return the same values and perform very different amounts of work. The interface must say which quantitative relation the client can rely on.</p>
           <p>One motivation for considering univalent foundations is that they offer expressive ways to organize abstract and concrete views inside types. The <cite>Abstraction Functions as Types</cite> work develops such a method for behaviour and cost. Mugda2’s experiment asks whether that machinery makes its actual client proofs substantially simpler than explicit simulation records.</p>
-          <p class="source">Primary source: <a href="https://runmingl.github.io/paper/afat.pdf">Grodin, Li &amp; Harper, <cite>Abstraction Functions as Types</cite> (POPL 2026)</a>. <a href="EXPERIMENTS.md">Experiment A</a> defines the comparison for Mugda2.</p>
+          <p class="source">Primary source: <a href="https://runmingl.github.io/paper/afat.pdf">Grodin, Li &amp; Harper, <cite>Abstraction Functions as Types</cite> (POPL 2026)</a>. <a href="https://github.com/kmehltretter82/mugda2/blob/main/docs/EXPERIMENTS.md">Experiment A</a> defines the comparison for Mugda2.</p>
         </article>
         <article class="lesson" id="extraction">
           <span class="lesson-number">2.4 / Erasure, extraction, and cost</span>
@@ -293,7 +293,7 @@ rewrite (branch children) =
           <p><strong>UIP</strong> means uniqueness of identity proofs; <strong>K</strong> is a closely related identity-elimination principle. A blanket test requiring every candidate to reject them would contradict the named OTT candidate. Regression expectations must therefore be indexed by the chosen equality theory.</p>
           <p>Combining a strict, proof-irrelevant equality with general higher paths is a further design. It needs distinct equality notions and explicit interaction rules. It cannot be obtained by silently using Lean equality for some object-language paths.</p>
           <p>The experiment uses the same abstract client, equations, opacity boundaries, and cost contract in each candidate. It records proof effort, generated term size, conversion behaviour, checking cost, and additional semantic obligations. If richer options show no decisive advantage within the experiment, the current plan keeps the intensional control as the provisional target.</p>
-          <p class="source">Primary sources: <a href="https://pujet.fr/pdf/toplas25_cicobs.pdf">Pujet, Leray &amp; Tabareau, <cite>Observational Equality Meets CIC</cite>, §2.3</a>; <a href="https://agda.readthedocs.io/en/latest/language/cubical.html">Cubical Agda documentation</a>. Protocol: <a href="EXPERIMENTS.md">EXP-A</a>.</p>
+          <p class="source">Primary sources: <a href="https://pujet.fr/pdf/toplas25_cicobs.pdf">Pujet, Leray &amp; Tabareau, <cite>Observational Equality Meets CIC</cite>, §2.3</a>; <a href="https://agda.readthedocs.io/en/latest/language/cubical.html">Cubical Agda documentation</a>. Protocol: <a href="https://github.com/kmehltretter82/mugda2/blob/main/docs/EXPERIMENTS.md">EXP-A</a>.</p>
           <details><summary>Parametric, guarded, and directed ideas address different questions</summary><p><strong>Internal parametricity</strong> supports reasoning about uniformity across abstract parameters. <strong>Guarded recursion</strong> organizes productive recursive behaviour through controlled observations. A <strong>directed cost order</strong> compares computations quantitatively; in a simple deterministic reading, one computation has the same specified behaviour and costs no more than another. General directed higher type theory has a broader purpose. These are possible research ingredients, not interchangeable successors to cubical type theory.</p><p>Each additional ingredient needs a demonstrated use case and a soundness argument for its interaction with the selected fragment. The project’s distinct target is the combination of modular termination, abstraction, and cost.</p></details>
         </article>
         <article class="lesson" id="recursion">
@@ -307,7 +307,7 @@ rewrite (branch children) =
           </div>
           <p>A useful outcome can be “translation meets the requirements.” A useful negative result can be a minimal example where the specified computation rule cannot be delivered without weakening another obligation. An experiment that remains inconclusive does not justify treating a new rule as sound.</p>
           <div class="note research"><strong>Dependent patterns are part of the theory.</strong><p>Matching exposes constructor information that refines indices and contexts. The elaborator must justify those refinements and preserve first-match semantics. It must not strengthen an index assumption in a way that invents recursive descent. Known exploits become reason-specific regression cases; their rejection complements the metatheorem rather than replacing it.</p></div>
-          <p class="source">Further reading: <a href="https://pujet.fr/pdf/irrelevant_accessibility.pdf"><cite>Definitional Proof Irrelevance Made Accessible</cite></a>; <a href="https://drops.dagstuhl.de/entities/document/10.4230/LIPIcs.FSCD.2026.21"><cite>Constructing (Co)inductive Types via Large Sizes</cite></a>. Their results concern their stated calculi; the proposed Mugda2 combination has additional obligations. Protocol: <a href="EXPERIMENTS.md">EXP-B</a>.</p>
+          <p class="source">Further reading: <a href="https://pujet.fr/pdf/irrelevant_accessibility.pdf"><cite>Definitional Proof Irrelevance Made Accessible</cite></a>; <a href="https://drops.dagstuhl.de/entities/document/10.4230/LIPIcs.FSCD.2026.21"><cite>Constructing (Co)inductive Types via Large Sizes</cite></a>. Their results concern their stated calculi; the proposed Mugda2 combination has additional obligations. Protocol: <a href="https://github.com/kmehltretter82/mugda2/blob/main/docs/EXPERIMENTS.md">EXP-B</a>.</p>
         </article>
         <article class="lesson" id="proof-boundary">
           <span class="lesson-number">3.3 / The trust contract <span class="pill planned">Planned</span></span>
@@ -361,7 +361,7 @@ rewrite (branch children) =
           <div class="equation">1 ≤ w<sub>s</sub> ≤ H,&nbsp;&nbsp; ∑<sub>t</sub> P(s, a, t)w<sub>t</sub> ≤ w<sub>s</sub> − 1<small>For every available action at every nonterminal state; H ≥ 1.</small></div>
           <p>The drift condition supplies a bound on expected remaining transitions. In a one-state illustration, stay with probability 1 − δ and terminate with probability δ. Setting <em>w = H = 1/δ</em> gives <em>(1 − δ)H = H − 1</em>. With <em>δ = 2<sup>−n</sup></em>, the horizon is exponential even though the denominator has only <em>n + 1</em> bits. This one-action illustration has no policy-iteration lower bound; it explains why “polynomial in the horizon” need not mean “polynomial in input bits.”</p>
           <p>Combining the proposed upper bound with the existing lower bound requires a proved correspondence of models, schedules, and measured events. General transport, compressed certificates, and the horizon theorem can develop in parallel after the shared interfaces exist.</p>
-          <p class="source">Application sources: <a href="https://arxiv.org/abs/1305.3944">Avis &amp; Friedmann, <cite>An Exponential Lower Bound for Cunningham’s Rule</cite></a>; <a href="https://prove2.me/missions/Exponential_lower_bounds_for_Cunningham%E2%80%99s_rule">the formalization mission</a>. Proposed work and dependencies: <a href="../MILESTONES.md">M6–M9.5</a>.</p>
+          <p class="source">Application sources: <a href="https://arxiv.org/abs/1305.3944">Avis &amp; Friedmann, <cite>An Exponential Lower Bound for Cunningham’s Rule</cite></a>; <a href="https://prove2.me/missions/Exponential_lower_bounds_for_Cunningham%E2%80%99s_rule">the formalization mission</a>. Proposed work and dependencies: <a href="https://github.com/kmehltretter82/mugda2/blob/main/MILESTONES.md">M6–M9.5</a>.</p>
         </article>
         <article class="lesson" id="engineering">
           <span class="lesson-number">3.5 / Requirements before implementation</span>
@@ -371,9 +371,9 @@ rewrite (branch children) =
             <thead><tr><th>Document</th><th>Question it answers</th><th>How it changes</th></tr></thead>
             <tbody>
               <tr><td>This concept guide</td><td>Why does the project exist, and how do its ideas fit together?</td><td>Examples and explanations evolve with the design.</td></tr>
-              <tr><td><a href="../REQUIREMENTS.md">Requirements</a></td><td>What must a supported feature guarantee, and what evidence demonstrates that?</td><td>Stable IDs; explicit revisions when scope or meaning changes.</td></tr>
-              <tr><td><a href="EXPERIMENTS.md">Experiment protocols</a></td><td>Which observations can resolve an open architecture decision?</td><td>Freeze the comparison before evaluating candidates.</td></tr>
-              <tr><td><a href="../MILESTONES.md">Milestones</a></td><td>When do we attempt each result, and what does it depend on?</td><td>Scheduling responds to evidence without silently weakening gates.</td></tr>
+              <tr><td><a href="https://github.com/kmehltretter82/mugda2/blob/main/REQUIREMENTS.md">Requirements</a></td><td>What must a supported feature guarantee, and what evidence demonstrates that?</td><td>Stable IDs; explicit revisions when scope or meaning changes.</td></tr>
+              <tr><td><a href="https://github.com/kmehltretter82/mugda2/blob/main/docs/EXPERIMENTS.md">Experiment protocols</a></td><td>Which observations can resolve an open architecture decision?</td><td>Freeze the comparison before evaluating candidates.</td></tr>
+              <tr><td><a href="https://github.com/kmehltretter82/mugda2/blob/main/MILESTONES.md">Milestones</a></td><td>When do we attempt each result, and what does it depend on?</td><td>Scheduling responds to evidence without silently weakening gates.</td></tr>
             </tbody>
           </table></div>
           <p>Before a core fragment is implemented, its specification must define syntax, binding and substitution, environments, universes, typing, conversion, computation, and supported recursion. Before the service is implemented, its protocol must define snapshots, outcomes, budgets, diagnostics, and candidate isolation. These are subsequent design artifacts; the educational guide is not a substitute for a formal calculus.</p>
@@ -424,7 +424,7 @@ rewrite (branch children) =
         <div class="next-panel">
           <h3>Turn the explanation into a checked commitment.</h3>
           <p>The requirements baseline gives the project stable obligations. The experiment protocols turn open design choices into reproducible comparisons. The milestone plan schedules the work.</p>
-          <div class="next-links"><a href="../REQUIREMENTS.md">Read the requirements →</a><a href="EXPERIMENTS.md">Inspect the experiments →</a><a href="../MILESTONES.md">Follow the roadmap →</a></div>
+          <div class="next-links"><a href="https://github.com/kmehltretter82/mugda2/blob/main/REQUIREMENTS.md">Read the requirements →</a><a href="https://github.com/kmehltretter82/mugda2/blob/main/docs/EXPERIMENTS.md">Inspect the experiments →</a><a href="https://github.com/kmehltretter82/mugda2/blob/main/MILESTONES.md">Follow the roadmap →</a></div>
         </div>
         <footer class="footer"><span>Mugda2 · Concept guide v0.1 · 7 November 2026</span><span>Design baseline: <a href="https://github.com/kmehltretter82/mugda2/tree/d228f6e982136ab55ae300ff3a06d038341669d9">d228f6e</a> · <a href="#main">Back to the idea ↑</a></span></footer>
       </section>
