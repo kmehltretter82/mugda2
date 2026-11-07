@@ -1,0 +1,553 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="An illustrated introduction to Mugda2: sized recursion, modular cost contracts, checked evidence, and the research decisions behind a new dependent language.">
+  <meta name="color-scheme" content="light">
+  <title>Mugda2 — A guide to the ideas</title>
+  <style>
+    :root{--paper:#f7f6f0;--white:#fffefa;--ink:#202f35;--muted:#53666c;--line:#d8dfd9;--teal:#005c50;--mint:#e7f2ea;--blue:#274b8b;--blue-wash:#edf1fa;--rust:#9b4125;--peach:#faeee5;--navy:#152e36;--gold:#efc889;--radius:12px}
+    *{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:98px}body{margin:0;background:var(--paper);color:var(--ink);font:17px/1.72 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+    a{color:var(--teal);text-decoration-thickness:1px;text-underline-offset:4px}a:hover{text-decoration-thickness:2px}button,input{font:inherit}button,a,input,summary{-webkit-tap-highlight-color:transparent}a:focus-visible,button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid var(--rust);outline-offset:5px}
+    button{cursor:pointer}button:disabled{cursor:default;opacity:.5}button:hover:not(:disabled){filter:brightness(.94)}[hidden]{display:none!important}
+    .skip{position:fixed;top:-70px;left:18px;background:var(--ink);color:white;padding:10px 20px;z-index:100}.skip:focus{top:12px}
+    .topbar{height:76px;border-bottom:1px solid var(--line);background:rgba(247,246,240,.97);position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;padding:0 36px;gap:20px}
+    .brand{display:flex;align-items:center;gap:13px;text-decoration:none;color:var(--ink);white-space:nowrap}.brand-mark{width:33px;height:33px;display:grid;place-items:center;background:var(--teal);color:var(--white);font:italic 25px Georgia,serif;border-radius:7px}.brand strong{font-size:20px;letter-spacing:-.7px}.brand span:last-child{color:var(--muted);font-size:12px;letter-spacing:1.3px;text-transform:uppercase;border-left:1px solid var(--line);padding-left:14px;margin-left:2px}
+    .topnav{display:flex;align-items:center;gap:25px;font-size:13px}.topnav a{color:var(--ink);text-decoration:none}.plain-button{background:none;border:0;color:var(--muted);padding:5px 0;font-size:13px}
+    .shell{display:grid;grid-template-columns:242px minmax(0,1fr);max-width:1536px;margin:auto}.sidebar{position:sticky;top:76px;align-self:start;height:calc(100vh - 76px);overflow-y:auto;border-right:1px solid var(--line);padding:32px 23px 25px 30px;font-size:13px}
+    .eyebrow{font-size:11px;letter-spacing:1.7px;text-transform:uppercase;font-weight:750}.sidebar .eyebrow{color:var(--muted);margin:0 0 14px}.sidebar nav{display:flex;flex-direction:column;gap:2px}.sidebar a{padding:6px 10px;text-decoration:none;color:var(--muted);border-radius:5px;line-height:1.5}.sidebar a:hover{background:#edf0e8;color:var(--ink)}.sidebar a[aria-current="location"]{background:var(--mint);color:var(--teal);font-weight:650}.sidebar .nav-group{font-size:11px;text-transform:uppercase;letter-spacing:1.1px;font-weight:750;color:var(--ink);margin:22px 10px 5px}.side-status{border-top:1px solid var(--line);margin-top:26px;padding:20px 10px 0;font-size:12px;line-height:1.6;color:var(--muted)}.status-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--rust);margin-right:7px}
+    main{min-width:0}.hero{padding:58px 62px 42px;position:relative;overflow:hidden}.hero .eyebrow{color:var(--teal);display:flex;align-items:center;gap:13px}.hero .eyebrow::before{content:"";width:30px;height:1px;background:var(--teal)}
+    h1,h2,h3,h4,p{margin-top:0}h1,h2{font-family:Georgia,"Times New Roman",serif;font-weight:400;letter-spacing:-1.5px}h1{font-size:clamp(42px,4.6vw,68px);line-height:1.08;margin:24px 0 23px;max-width:800px}h1 em{color:var(--teal);font-weight:400}h2{font-size:39px;line-height:1.2;margin-bottom:21px}h3{font-size:24px;line-height:1.35;letter-spacing:-.5px;margin-bottom:16px}h4{font-size:17px;line-height:1.4;margin-bottom:9px}p{margin-bottom:18px}.lead{font-size:20px;line-height:1.65;color:var(--muted);max-width:790px}.hero-meta{font-size:12px;color:var(--muted);margin:22px 0 0}.hero-meta strong{color:var(--ink)}
+    .promise-strip{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--line);margin:32px 0 0;border-radius:var(--radius);overflow:hidden;background:var(--white)}.promise-strip>div{padding:20px 23px;border-left:1px solid var(--line)}.promise-strip>div:first-child{border-left:0}.promise-strip .symbol{font:italic 23px Georgia,serif;color:var(--teal);display:block;margin-bottom:7px}.promise-strip strong{font-size:14px}.promise-strip p{font-size:13px;line-height:1.6;color:var(--muted);margin:4px 0 0}
+    .reading-paths{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:31px 0 0}.path{padding:18px 19px 20px;border:1px solid var(--line);border-radius:var(--radius);text-decoration:none;color:var(--ink);background:var(--white);transition:transform .15s,border-color .15s}.path:hover{transform:translateY(-3px);border-color:var(--teal)}.path small{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;font-weight:750;color:var(--teal)}.path strong{display:block;margin:8px 0;font-size:17px}.path span{display:block;font-size:13px;line-height:1.6;color:var(--muted)}.path b{display:block;font-size:15px;margin-top:14px;color:var(--teal)}.path:nth-child(2) small,.path:nth-child(2) b{color:var(--blue)}.path:nth-child(3) small,.path:nth-child(3) b{color:var(--rust)}
+    .content{padding:0 62px 70px;max-width:1130px}.chapter{padding-top:51px;margin-top:12px;border-top:1px solid var(--line)}.chapter-head{margin-bottom:33px}.chapter-head .eyebrow{color:var(--teal);margin-bottom:13px}.chapter-head p{color:var(--muted);max-width:780px}.chapter.intermediate .chapter-head .eyebrow{color:var(--blue)}.chapter.advanced .chapter-head .eyebrow{color:var(--rust)}
+    .lesson{margin:0 0 43px;scroll-margin-top:101px}.lesson p,.lesson li{max-width:82ch}.lesson-number{font:12px/1.5 ui-monospace,SFMono-Regular,Consolas,monospace;color:var(--muted);display:block;margin-bottom:9px}.note{padding:20px 24px;border-left:3px solid var(--teal);background:var(--mint);border-radius:0 8px 8px 0;margin:23px 0;font-size:15px}.note p:last-child{margin-bottom:0}.note.research{border-color:var(--rust);background:var(--peach)}.note.blue{border-color:var(--blue);background:var(--blue-wash)}.note strong{display:block;margin-bottom:6px}
+    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:23px}.card{padding:24px;border:1px solid var(--line);border-radius:var(--radius);background:var(--white)}.card p{font-size:15px;line-height:1.7}.card p:last-child{margin-bottom:0}.card .eyebrow{color:var(--muted);margin-bottom:12px}.pill{display:inline-block;border:1px solid currentColor;border-radius:20px;padding:1px 8px;font-size:10px;line-height:1.9;letter-spacing:.7px;text-transform:uppercase;color:var(--teal);vertical-align:middle;white-space:nowrap}.pill.open{color:var(--rust)}.pill.planned{color:var(--blue)}
+    ul,ol{padding-left:23px;margin:0 0 22px}li{padding-left:4px;margin:7px 0}.fine{font-size:13px;line-height:1.65;color:var(--muted)}.source{font-size:13px;color:var(--muted);margin-top:15px}.source a{color:inherit}
+    code{font: .88em/1.6 ui-monospace,SFMono-Regular,Consolas,"Liberation Mono",monospace;background:#eaece5;border-radius:4px;padding:2px 4px;overflow-wrap:anywhere}pre{background:var(--navy);color:#eef3ed;overflow-x:auto;border-radius:var(--radius);padding:24px;margin:20px 0;line-height:1.75;font-size:14px;tab-size:2}pre code{padding:0;background:none;color:inherit;white-space:pre;overflow-wrap:normal;font-size:inherit}.code-label{display:flex;justify-content:space-between;gap:12px;color:var(--muted);font-size:11px;letter-spacing:1px;text-transform:uppercase;margin-top:24px}.syntax-comment{color:#b5cdc8}.syntax-key{color:#f2cb88}.syntax-type{color:#a3ded0}
+    .equation{padding:22px 24px;background:var(--white);border:1px solid var(--line);border-radius:9px;font:20px/1.7 Georgia,"Times New Roman",serif;overflow-x:auto;text-align:center;margin:20px 0}.equation small{display:block;font:12px/1.6 system-ui,sans-serif;color:var(--muted);margin-top:8px}.table-wrap{overflow-x:auto;margin:22px 0;border:1px solid var(--line);border-radius:10px;background:var(--white)}table{width:100%;border-collapse:collapse;font-size:14px;line-height:1.6;text-align:left}th{font-size:11px;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);background:#edf0e8;font-weight:750}th,td{padding:14px 17px;border-bottom:1px solid var(--line);vertical-align:top}tr:last-child td{border-bottom:0}td:first-child{font-weight:600}caption{text-align:left;font-size:12px;color:var(--muted);padding:12px 17px;border-bottom:1px solid var(--line)}
+    details{margin:18px 0;border:1px solid var(--line);border-radius:9px;background:var(--white);padding:0 20px}summary{cursor:pointer;font-weight:650;font-size:14px;padding:15px 0}details>p{font-size:15px}details[open]{padding-bottom:5px}
+    .demo{background:var(--navy);color:#eff5ef;padding:28px 30px;border-radius:14px;margin:24px 0}.demo h4{color:white;font-size:19px}.demo .fine{color:#bfd1cf}.demo label{font-size:14px}.demo input[type=range]{width:100%;accent-color:#edc98b;margin:18px 0}.demo .eyebrow{color:#bbd2cb}.demo .demo-heading{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:17px}.demo .demo-heading h4{margin:0}.demo .demo-tag{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#e9c48d;border:1px solid #6f7460;border-radius:20px;padding:3px 10px;white-space:nowrap}
+    .demo-stats{display:grid;grid-template-columns:1fr 2fr;gap:20px;border-top:1px solid #3d565b;padding-top:21px}.demo-stats output{display:block;font:38px/1.25 Georgia,serif;color:#f1d094;font-variant-numeric:tabular-nums}.demo-stats span{font-size:12px;color:#bfd1cf}.demo-footer{border-top:1px solid #3d565b;padding-top:17px;margin:20px 0 0;font-size:12px;line-height:1.7;color:#bfd1cf}
+    .steps{counter-reset:steps;list-style:none;padding:0;margin:24px 0;display:grid;grid-template-columns:1fr 1fr;gap:15px}.steps li{counter-increment:steps;border:1px solid var(--line);border-radius:10px;background:var(--white);margin:0;padding:21px;font-size:14px}.steps li::before{content:"0" counter(steps);font:13px ui-monospace,monospace;display:block;color:var(--teal);margin-bottom:12px}.steps strong{display:block;font-size:16px;margin-bottom:7px}
+    .queue-lists{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:20px 0}.queue-list{border:1px solid #496169;border-radius:8px;padding:14px;min-height:101px}.queue-label{font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:#bfd1cf}.tokens{display:flex;gap:5px;flex-wrap:wrap;margin-top:11px;min-height:30px;align-items:center}.token{height:30px;min-width:30px;padding:0 7px;display:grid;place-items:center;border-radius:5px;background:#dcebe4;color:#163931;font-size:13px;font-weight:650}.tokens .empty{font:italic 14px Georgia,serif;color:#a8c1bd}.demo-actions{display:flex;gap:9px;flex-wrap:wrap;margin:19px 0}.demo-actions button{border:1px solid #c4d5ce;border-radius:6px;padding:8px 14px;background:#e8f2e9;color:#183b32;font-size:13px;font-weight:650}.demo-actions button.secondary{background:transparent;color:#e2eae5;border-color:#5c757b}
+    .queue-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;padding:16px 0;border-top:1px solid #3d565b;border-bottom:1px solid #3d565b}.queue-metrics output{font:30px Georgia,serif;display:block;color:#f1d094}.queue-metrics span{font-size:11px;color:#bfd1cf}.queue-announcement{min-height:48px;margin:17px 0 0;font-size:13px;line-height:1.7}.queue-equation{font:17px/1.7 Georgia,serif;margin:15px 0 5px;color:#e4eedd}
+    .architecture{border:1px solid var(--line);border-radius:12px;background:var(--white);padding:25px;margin:22px 0}.architecture-row{display:grid;grid-template-columns:1fr 1fr;gap:20px}.architecture-node{border:1px solid #b6c9c1;border-radius:8px;padding:17px 19px;background:var(--mint);font-size:14px}.architecture-node strong{display:block;margin-bottom:5px}.architecture-node small{font-size:12px;color:var(--muted);line-height:1.5;display:block}.architecture-node.checker{background:var(--navy);color:white;border-color:var(--navy);margin:19px 0}.architecture-node.checker small{color:#bdd3cc}.architecture-caption{font-size:12px;color:var(--muted);margin:17px 0 0}
+    .glossary{display:grid;grid-template-columns:1fr 1fr;gap:0 28px}.glossary>div{padding:16px 0;border-top:1px solid var(--line)}dt{font-weight:700;font-size:15px;margin-bottom:7px}dd{font-size:14px;line-height:1.7;color:var(--muted);margin:0}.sources{padding-left:22px;font-size:14px}.sources li{margin:0 0 18px;padding-left:8px}.sources a{font-weight:600}.sources span{display:block;color:var(--muted);font-size:12px;margin-top:4px}.next-panel{margin-top:37px;background:var(--mint);border-radius:12px;padding:30px}.next-panel h3{font-family:Georgia,serif;font-size:27px;font-weight:400}.next-panel p{font-size:15px}.next-links{display:flex;flex-wrap:wrap;gap:14px 25px;font-size:14px;font-weight:650}.footer{border-top:1px solid var(--line);font-size:12px;color:var(--muted);padding:24px 0;margin-top:40px;display:flex;justify-content:space-between;gap:20px}
+    @media(min-width:1500px){.hero{padding-top:70px}.content{max-width:1180px}}
+    @media(max-width:1100px){.shell{grid-template-columns:202px minmax(0,1fr)}.sidebar{padding-left:18px;padding-right:14px}.hero{padding:43px 35px 35px}.content{padding:0 35px 45px}.topbar{padding:0 25px}.topnav{gap:18px}.brand span:last-child{display:none}h1{font-size:51px}.reading-paths{gap:10px}.path{padding:16px 14px}.promise-strip>div{padding:17px}}
+    @media(max-width:800px){html{scroll-padding-top:83px}.topbar{height:66px;padding:0 20px}.topnav{gap:16px}.topnav .optional{display:none}.shell{display:block}.sidebar{display:none}.hero{padding:35px 25px 30px}.content{padding:0 25px 40px}h1{font-size:49px}.lead{font-size:18px}.chapter{padding-top:38px}h2{font-size:34px}.chapter-head{margin-bottom:28px}.lesson{margin-bottom:36px}}
+    @media(max-width:540px){body{font-size:16px}.topbar{padding:0 16px;gap:12px}.topnav{gap:14px;font-size:12px}.plain-button{font-size:12px}.brand{gap:8px}.brand strong{font-size:19px}.brand-mark{width:29px;height:29px;font-size:23px}.hero{padding:31px 20px 26px}.content{padding:0 20px 30px}h1{font-size:42px;letter-spacing:-1.5px}h2{font-size:31px}h3{font-size:22px}.hero .eyebrow{font-size:10px;letter-spacing:1.1px}.reading-paths{grid-template-columns:1fr;gap:10px}.path{display:grid;grid-template-columns:1fr 26px;padding:16px 18px;column-gap:10px}.path small,.path strong,.path span{grid-column:1}.path small{font-size:9px}.path strong{font-size:17px;margin:5px 0}.path b{grid-column:2;grid-row:1/4;align-self:center;margin:0}.promise-strip{grid-template-columns:1fr}.promise-strip>div{display:grid;grid-template-columns:28px 1fr;gap:2px 13px;border-left:0;border-top:1px solid var(--line);padding:15px 18px}.promise-strip>div:first-child{border-top:0}.promise-strip .symbol{grid-row:1/3;margin:0}.promise-strip p{margin:0;grid-column:2}.two-col,.steps,.glossary,.architecture-row{grid-template-columns:1fr}.demo{padding:23px 20px}.demo .demo-heading{align-items:start}.demo h4{font-size:17px}.demo .demo-tag{font-size:8px;padding:3px 7px}.demo-stats{gap:14px;grid-template-columns:1fr 2fr}.demo-stats output{font-size:32px}.demo-stats span{font-size:10px}.queue-lists{gap:10px}.queue-list{padding:11px}.queue-label{font-size:9px}.queue-metrics{gap:10px}.queue-metrics span{font-size:10px}.queue-metrics output{font-size:27px}.note{padding:18px}.card{padding:21px}.equation{font-size:18px;padding:18px 15px}.footer{flex-direction:column;gap:5px}pre{font-size:12px;padding:19px}.code-label{font-size:9px}th,td{padding:12px;min-width:105px}.next-panel{padding:24px}}
+    @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.path{transition:none}}
+    @media print{@page{margin:18mm}body{font-size:10pt;background:white;color:black}.topbar,.sidebar,.reading-paths,.skip,.demo-actions,.demo input,.plain-button{display:none}.shell{display:block}.hero,.content{padding:0;max-width:none}h1{font-size:32pt}h2{font-size:23pt}.hero{margin-bottom:25px}.chapter{padding-top:20px;break-before:page}.lesson{margin-bottom:25px}.demo{background:#eef2ee;color:black;border:1px solid #aaa}.demo h4,.demo .fine,.demo-stats span,.demo-stats output,.demo-footer,.demo .eyebrow,.queue-label,.queue-metrics span,.queue-metrics output,.queue-equation{color:black}.architecture-node.checker,pre{background:#eef2ee;color:black;border:1px solid #aaa}.architecture-node.checker small,.syntax-comment,.syntax-key,.syntax-type{color:#333}.note,.card,.table-wrap,.demo,.equation{break-inside:avoid}.lesson h3{break-after:avoid}a{color:inherit}.sources a{overflow-wrap:anywhere}.tokens .empty{color:#333}.footer{font-size:9pt}.chapter-head p{font-size:11pt}}
+  </style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to the guide</a>
+<header class="topbar">
+  <a class="brand" href="#top" aria-label="Mugda2 guide home"><span class="brand-mark" aria-hidden="true">m</span><strong>Mugda<span aria-hidden="true">₂</span><span class="sr-only" hidden>2</span></strong><span>A guide to the ideas</span></a>
+  <nav class="topnav" aria-label="Project links">
+    <a href="../REQUIREMENTS.md">Requirements</a>
+    <a class="optional" href="../MILESTONES.md">Roadmap</a>
+    <a class="optional" href="https://github.com/kmehltretter82/mugda2">GitHub ↗</a>
+    <button class="plain-button" id="print-guide" type="button" hidden>Print</button>
+  </nav>
+</header>
+<div class="shell" id="top">
+  <aside class="sidebar" aria-label="Guide contents">
+    <p class="eyebrow">Explore the project</p>
+    <nav aria-label="Chapters">
+      <a href="#main">The big idea</a>
+      <span class="nav-group">01 · Introductory</span>
+      <a href="#intro">Programs and promises</a>
+      <a href="#termination">Stopping is a separate claim</a>
+      <a href="#four-quantities">Four different quantities</a>
+      <a href="#agents">What an agent contributes</a>
+      <span class="nav-group">02 · Intermediate</span>
+      <a href="#intermediate">Contracts that compose</a>
+      <a href="#sizes">Sizes across interfaces</a>
+      <a href="#potential">Paying for future work</a>
+      <a href="#abstraction">Changing representation</a>
+      <a href="#extraction">From evidence to execution</a>
+      <span class="nav-group">03 · Advanced</span>
+      <a href="#advanced">The mathematical contract</a>
+      <a href="#equality">Choosing equality</a>
+      <a href="#recursion">Native recursion or translation</a>
+      <a href="#proof-boundary">Four proof obligations</a>
+      <a href="#science">The formalization programme</a>
+      <a href="#engineering">Specification before implementation</a>
+      <span class="nav-group">Keep exploring</span>
+      <a href="#glossary">Small glossary</a>
+      <a href="#references">Sources &amp; further reading</a>
+    </nav>
+    <div class="side-status"><span class="status-dot" aria-hidden="true"></span><strong>Design stage · M0</strong><br>Concepts, requirements, and experiments. Mugda2’s checker is planned.<br><br>Guide v0.1 · 7 Nov 2026</div>
+  </aside>
+  <main id="main">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="eyebrow">A new language for checked algorithms</div>
+      <h1 id="hero-title">Why it works.<br>Why it stops.<br><em>What it costs.</em></h1>
+      <p class="lead">Mugda2 explores a programming language in which reusable components carry precise guarantees about their behaviour, termination, and resource use—and people and AI agents can construct the evidence together.</p>
+      <div class="promise-strip" aria-label="Three project goals">
+        <div><span class="symbol" aria-hidden="true">⊢</span><strong>Explicit evidence</strong><p>Claims come with proofs or checked certificates.</p></div>
+        <div><span class="symbol" aria-hidden="true">∀</span><strong>Modular reasoning</strong><p>Clients use contracts across hidden implementations.</p></div>
+        <div><span class="symbol" aria-hidden="true">Φ</span><strong>Quantitative guarantees</strong><p>Cost has a named unit, model, and bound.</p></div>
+      </div>
+      <div class="reading-paths" aria-label="Choose a reading level">
+        <a class="path" href="#intro"><small>01 / Introductory</small><strong>Understand the purpose</strong><span>No type theory needed. Start with programs, promises, and one countdown.</span><b aria-hidden="true">↗</b></a>
+        <a class="path" href="#intermediate"><small>02 / Intermediate</small><strong>Follow the mechanisms</strong><span>For programmers. Explore sized interfaces, potentials, and extraction.</span><b aria-hidden="true">↗</b></a>
+        <a class="path" href="#advanced"><small>03 / Advanced</small><strong>Inspect the foundations</strong><span>Compare equality choices, theorem boundaries, and research gates.</span><b aria-hidden="true">↗</b></a>
+      </div>
+      <p class="hero-meta"><strong>Status matters.</strong> This is a design guide, not a language reference. Code is schematic. Interactive examples illustrate arithmetic; they do not run a Mugda2 checker.</p>
+      <noscript><p class="fine">All lessons are available without JavaScript. Enable it to use the two interactive illustrations.</p></noscript>
+    </section>
+    <div class="content">
+      <section class="chapter introductory" id="intro" aria-labelledby="intro-title">
+        <header class="chapter-head">
+          <div class="eyebrow">01 / Introductory · Understand the purpose</div>
+          <h2 id="intro-title">A program can carry its reasons.</h2>
+          <p>By the end of this section, you should be able to explain what Mugda2 wants to guarantee—and why each guarantee needs its own evidence.</p>
+        </header>
+        <article class="lesson" id="programs">
+          <span class="lesson-number">1.1 / From ordinary types to precise promises</span>
+          <h3>What does “this program is correct” mean?</h3>
+          <p>Imagine a sorting function. A conventional type can say that it consumes a list of numbers and returns another list. That still leaves important questions: Is the result sorted? Does it contain exactly the original elements? Does the function return at all? How many comparisons does it perform?</p>
+          <p>A <strong>dependent type</strong> can express a result together with evidence about that result. For sorting, the specification can demand a sorted permutation of the input. Mugda2’s ambition adds compositional termination and cost contracts: you should be able to use a component without reopening all its implementation details.</p>
+          <div class="code-label"><span>A specification sketch</span><span>Proposed notation · not executable</span></div>
+          <pre><code><span class="syntax-key">sort</span> (xs : List Number)
+  returns ys : List Number
+  ensures Sorted ys
+  ensures Permutation xs ys
+  terminates
+  comparisons ≤ B(length xs)</code></pre>
+          <p>The function <code>B</code> must be defined and justified for the chosen sorting algorithm. “Fast” is not a mathematical contract; “at most this many comparisons” can be. A theorem is only as useful as the specification it proves, so choosing the right statement remains a human responsibility.</p>
+          <div class="note">
+            <strong>The continuity with Mugda</strong>
+            <p>Mugda2 grows out of Karl Mehltretter’s Mugda work on sized types and termination. The current <a href="https://github.com/kmehltretter82/mugda/tree/b0c5b53c92673e4a7d57b218b4050690e719f0e7">Lean implementation of Mugda</a> supplies examples and component metatheory. A complete correctness theorem for the proposed Mugda2 language is future work. The known pattern-matching problems motivate explicit rules and permanent counterexample tests.</p>
+          </div>
+        </article>
+        <article class="lesson" id="termination">
+          <span class="lesson-number">1.2 / A first distinction</span>
+          <h3>Stopping and finishing quickly are different.</h3>
+          <p>A program that counts down from a natural number <em>r</em> stops because every recursive call uses a smaller nonnegative value. That argument establishes <strong>termination</strong>. It does not yet give a small running-time bound in terms of the input’s encoded length.</p>
+          <p>An <em>n</em>-bit input can store the number 2<sup>n</sup> − 1. Counting down by one therefore takes 2<sup>n</sup> − 1 transitions. The numeric rank decreases every time; its number of bits usually does not.</p>
+          <div class="demo" aria-labelledby="countdown-title">
+            <div class="demo-heading"><h4 id="countdown-title">A small input. A long countdown.</h4><span class="demo-tag">Interactive illustration</span></div>
+            <label for="countdown-bits">Input width: <strong id="bits-label">12 bits</strong></label>
+            <input id="countdown-bits" type="range" min="1" max="30" value="12" step="1" aria-describedby="countdown-model" disabled>
+            <div class="demo-stats" aria-live="polite" aria-atomic="true">
+              <div><output id="bit-count" for="countdown-bits">12</output><span>bits to encode the initial value</span></div>
+              <div><output id="step-count" for="countdown-bits">4,095</output><span>unit-decrement transitions to zero</span></div>
+            </div>
+            <p class="demo-footer" id="countdown-model">Model: begin at 2ⁿ − 1 and count one event per decrement. This is an exact transition count, not a model of machine instructions, elapsed time, or Cunningham’s rule.</p>
+          </div>
+          <p>For an infinite stream, the relevant first guarantee is <strong>productivity</strong>: each finite observation can be obtained in finite work. A useful response-time guarantee needs an additional bound on that work. “Produces the next item eventually” does not mean “produces it cheaply.”</p>
+        </article>
+        <article class="lesson" id="four-quantities">
+          <span class="lesson-number">1.3 / The four quantities</span>
+          <h3>Measure the object, the work, and the evidence separately.</h3>
+          <p>Suppose a short program generates an input on which an algorithm makes an enormous number of steps. A mathematical proof might explain that behaviour using an induction over a compact family of phases. Four different questions arise:</p>
+          <div class="table-wrap"><table>
+            <thead><tr><th>Quantity</th><th>Question</th><th>Possible unit</th></tr></thead>
+            <tbody>
+              <tr><td>Input size</td><td>How much information represents the instance?</td><td>Bits, including coefficients and initial state</td></tr>
+              <tr><td>Construction cost</td><td>How much work produces that instance?</td><td>Bit operations of the generator</td></tr>
+              <tr><td>Execution cost</td><td>How much work does the studied algorithm perform?</td><td>Pivots, inspections, arithmetic or bit operations</td></tr>
+              <tr><td>Evidence size &amp; checking cost</td><td>How large is the certificate, and how much work verifies it?</td><td>Encoded certificate bits and checker bit operations</td></tr>
+            </tbody>
+          </table></div>
+          <p>A short certificate for a long execution is possible because it can establish a repeating mathematical structure without listing every step. But compactness, correctness, and cheap verification are three separate claims. Mugda2’s intended science example—the Avis–Friedmann lower bound for Cunningham’s pivot rule—makes these distinctions concrete. <a href="#science">The advanced section develops this example.</a></p>
+        </article>
+        <article class="lesson" id="agents">
+          <span class="lesson-number">1.4 / People, agents, and checking</span>
+          <h3>An agent proposes. Evidence earns acceptance.</h3>
+          <p>An LLM can suggest a recursive program, discover a useful invariant, propose a potential function, or search for a counterexample. Its confidence is not the acceptance criterion. The proposed architecture requires an explicit artifact that an independently specified checker can examine.</p>
+          <ol class="steps">
+            <li><strong>State a precise goal</strong>A person fixes the intended behaviour, assumptions, and cost model.</li>
+            <li><strong>Explore candidates</strong>A person or agent proposes an implementation and evidence in an isolated snapshot.</li>
+            <li><strong>Check the evidence</strong>The core rechecker or a proved certificate checker checks the relevant obligations.</li>
+            <li><strong>Expose the result</strong>The workbench shows the theorem, dependencies, assumptions, and any remaining obligations.</li>
+          </ol>
+          <p>The checker must distinguish <strong>accepted</strong>, <strong>rejected</strong>, and <strong>unknown</strong>. If normalization exhausts its budget, that is “unknown”; it is neither a proof nor a counterexample. A failed mutual definition must leave no partially accepted declarations behind.</p>
+          <p>Lean contributes an architectural example: rich elaboration and tactics produce terms that a smaller kernel checks. Mugda2 also needs its own object-language specification and metatheory; implementing its checker in Lean does not supply those results automatically.</p>
+          <p class="source">Architecture reference: <a href="https://lean-lang.org/doc/reference/latest/Elaboration-and-Compilation/">The Lean language reference: elaboration, kernel checking, and compilation</a>.</p>
+          <details><summary>Check your understanding</summary><p>A program is accepted with a termination proof. Have we established that it runs in polynomial time? <strong>No.</strong> We still need a cost model and a bound related to an explicit input-size measure. The countdown above is a counterexample to that inference.</p></details>
+        </article>
+      </section>
+      <section class="chapter intermediate" id="intermediate" aria-labelledby="intermediate-title">
+        <header class="chapter-head">
+          <div class="eyebrow">02 / Intermediate · Follow the mechanisms</div>
+          <h2 id="intermediate-title">Useful guarantees cross interfaces.</h2>
+          <p>This level assumes familiarity with functions, recursion, and data structures. We move from a claim about one program to contracts that survive composition and implementation changes.</p>
+        </header>
+        <article class="lesson" id="sizes">
+          <span class="lesson-number">2.1 / Sized types and opaque helpers</span>
+          <h3>Make recursive descent visible in the interface.</h3>
+          <p>A simple termination checker recognizes a recursive call on a syntactic subterm: a list’s tail or a tree’s child. But suppose a child first passes through a library function whose implementation is hidden. The resulting expression no longer looks like a subterm. The library’s interface must preserve the information the caller needs.</p>
+          <p>A <strong>sized type</strong> attaches a bound to a datatype. In this example, <code>Certificate i</code> means a finite certificate tree whose depth is bounded by size <code>i</code>, using a convention fixed by the eventual calculus. Matching a branch exposes children at smaller sizes <code>j &lt; i</code>. An opaque helper that preserves each child’s bound lets recursion continue.</p>
+          <div class="code-label"><span>A modular recursive visitor</span><span>Schematic · not final Mugda2 syntax</span></div>
+          <pre><code><span class="syntax-comment">-- The helper is checked once; its body stays hidden.</span>
+preprocess : <span class="syntax-key">∀ᵖ</span> i. <span class="syntax-type">Certificate</span> i → <span class="syntax-type">Certificate</span> i
+
+rewrite (leaf payload) = leaf payload
+rewrite (branch children) =
+  branch (map (λ child → rewrite (preprocess child)) children)
+
+<span class="syntax-comment">-- Branch evidence: child : Certificate j, with j &lt; i.</span>
+<span class="syntax-comment">-- Interface evidence: preprocess child : Certificate j.</span></code></pre>
+          <p>The proposed <code>∀ᵖ</code> marks <strong>parametric size quantification</strong>. Its intended role is to make size arguments usable for typing and termination while constraining how computation can depend on them. Ordinary “for every <code>i</code>” syntax does not by itself provide those uniformity or erasure guarantees; the calculus needs explicit rules and proofs.</p>
+          <p>The type above supplies a size contract. It does not say that preprocessing preserves the certificate’s meaning, keeps its node count unchanged, or has a particular cost. A real normalizer also needs a semantic preservation contract and a cost contract for the helper. Depth alone does not control branching.</p>
+          <div class="note blue"><strong>Why this example belongs in the requirements</strong><p>The client must work using the public interface alone. If a prototype succeeds only by unfolding <code>preprocess</code>, it has not demonstrated the intended modularity. This is also the concrete experiment for deciding whether sized recursion belongs in the core or can be translated into standard recursion.</p></div>
+          <p class="source">Background: <a href="https://arxiv.org/abs/1012.4896">Abel, <cite>MiniAgda</cite></a>; <a href="https://publications.lib.chalmers.se/records/fulltext/252072/local_252072.pdf">Abel, Vezzosi &amp; Winterhalter, normalization for sized types</a>. These motivate the design; they do not establish the soundness of Mugda2’s proposed combination.</p>
+        </article>
+        <article class="lesson" id="potential">
+          <span class="lesson-number">2.2 / Potential functions</span>
+          <h3>Cheap operations can pay for an expensive one.</h3>
+          <p>A queue can be represented by two lists. The <em>front</em> holds items ready to remove, oldest first. New items are pushed onto the <em>rear</em>, newest first. When the front is empty, reverse the rear into the front. Most operations are cheap; an occasional removal transfers several items.</p>
+          <p>For this teaching model, charge one unit for an enqueue, one for each transferred item, and one for a successful removal. Let the stored <strong>potential</strong> be the number of rear items: Φ(front, rear) = |rear|. The amortized charge of an operation is:</p>
+          <div class="equation">amortized charge = actual cost + Φ(after) − Φ(before)<small>Potential is a nonnegative mathematical account, not an extra runtime list.</small></div>
+          <p>An enqueue costs 1 and adds 1 potential, so its charge is 2. A removal with <em>k</em> items to transfer costs <em>k</em> + 1 but releases <em>k</em> potential, so its charge is 1. Starting from an empty queue, any valid sequence of <em>e</em> enqueues and <em>d</em> successful dequeues costs at most 2<em>e</em> + <em>d</em> in this model.</p>
+          <div class="demo" aria-labelledby="queue-title">
+            <div class="demo-heading"><h4 id="queue-title">Watch the potential pay.</h4><span class="demo-tag">Interactive illustration</span></div>
+            <p class="fine">Try three enqueues, then dequeue. The first removal spends the stored potential on a reversal.</p>
+            <div class="queue-lists">
+              <div class="queue-list"><div class="queue-label">Front · oldest first</div><div class="tokens" id="queue-front"><span class="empty">empty</span></div></div>
+              <div class="queue-list"><div class="queue-label">Rear · newest first</div><div class="tokens" id="queue-rear"><span class="empty">empty</span></div></div>
+            </div>
+            <div class="demo-actions" id="queue-actions" hidden>
+              <button type="button" id="enqueue">Enqueue</button>
+              <button type="button" id="dequeue" disabled>Dequeue</button>
+              <button type="button" id="queue-preset" class="secondary">Load 3 enqueues</button>
+              <button type="button" id="queue-reset" class="secondary">Reset</button>
+            </div>
+            <div class="queue-metrics">
+              <div><output id="queue-actual">0</output><span>total actual cost</span></div>
+              <div><output id="queue-potential">0</output><span>stored potential Φ</span></div>
+              <div><output id="queue-assigned">0</output><span>total amortized charge</span></div>
+            </div>
+            <p class="queue-equation" id="queue-balance">0 spent + 0 stored = 0 assigned</p>
+            <p class="queue-announcement" id="queue-message" role="status">The queue is empty. Each enqueue will assign two units: one spent now, one stored.</p>
+            <p class="demo-footer">This JavaScript demonstration implements the stated arithmetic model; it is not a verified queue implementation. It keeps one evolving queue, with no branching reuse of persistent versions. The interactive display limits the queue to 16 items.</p>
+          </div>
+          <p>The general proof adds the per-operation inequalities. Intermediate potentials cancel; the final potential is nonnegative. This explains a whole sequence of operations even though one operation can exceed its amortized charge. Persistent branching or parallel clients need an appropriate resource discipline to prevent spending the same credit twice.</p>
+          <p class="source">Research lineage: <a href="https://www.cs.cmu.edu/~janh/papers/hah12cav.pdf">Hoffmann, Aehlig &amp; Martin Hofmann, <cite>Resource Aware ML</cite></a>. More recent work explores potentials inside dependent type theory, including <a href="https://arxiv.org/abs/2607.08547"><cite>Potential Functions as Types</cite> (2026 preprint)</a>.</p>
+        </article>
+        <article class="lesson" id="abstraction">
+          <span class="lesson-number">2.3 / Representation independence</span>
+          <h3>Change the implementation. Keep the client proof.</h3>
+          <p>The mathematical queue is a sequence. The two-list implementation represents it by <code>front ++ reverse rear</code>. That mapping is an <strong>abstraction function</strong>: it tells us what a concrete state means.</p>
+          <p>A client should use the public operations and their contracts. A second implementation can replace the first when it satisfies the same behaviour and resource specification. It need not perform exactly the same internal steps or expose the same potential; those belong to the implementation’s proof.</p>
+          <div class="two-col">
+            <div class="card"><p class="eyebrow">What the client sees</p><h4>An abstract contract</h4><p>FIFO behaviour, an empty initial state, operation preconditions, and an upper cost specification. The client’s proof depends only on these facts.</p></div>
+            <div class="card"><p class="eyebrow">What an implementation proves</p><h4>A representation theorem</h4><p>Each operation respects the abstraction function and the agreed cost account. Internal storage and auxiliary invariants remain private.</p></div>
+          </div>
+          <p>Equality alone is not a cost theorem. Two implementations can return the same values and perform very different amounts of work. The interface must say which quantitative relation the client can rely on.</p>
+          <p>One motivation for considering univalent foundations is that they offer expressive ways to organize abstract and concrete views inside types. The <cite>Abstraction Functions as Types</cite> work develops such a method for behaviour and cost. Mugda2’s experiment asks whether that machinery makes its actual client proofs substantially simpler than explicit simulation records.</p>
+          <p class="source">Primary source: <a href="https://runmingl.github.io/paper/afat.pdf">Grodin, Li &amp; Harper, <cite>Abstraction Functions as Types</cite> (POPL 2026)</a>. <a href="EXPERIMENTS.md">Experiment A</a> defines the comparison for Mugda2.</p>
+        </article>
+        <article class="lesson" id="extraction">
+          <span class="lesson-number">2.4 / Erasure, extraction, and cost</span>
+          <h3>Evidence should justify computation without burdening it.</h3>
+          <p>A verified program may mention a size bound, a proof that a child is smaller, and ghost credits used in a resource argument. The executable often needs none of these at runtime. <strong>Erasure</strong> removes computationally irrelevant material; <strong>extraction</strong> produces executable code from the relevant part.</p>
+          <p>The important question is what remains true after the transformation. A behaviour theorem says that the extracted program produces the corresponding result. A separate <strong>cost adequacy theorem</strong> relates measured source work to measured target work.</p>
+          <div class="table-wrap"><table>
+            <thead><tr><th>Claim</th><th>Required relation</th></tr></thead>
+            <tbody>
+              <tr><td>Correct output</td><td>Source evaluation and target evaluation produce corresponding values.</td></tr>
+              <tr><td>Transferred upper bound</td><td>Target cost is bounded by the source account, with an explicit overhead relation if needed.</td></tr>
+              <tr><td>Transferred lower bound</td><td>Target cost dominates the relevant source count, or the chosen observable events are preserved exactly.</td></tr>
+            </tbody>
+          </table></div>
+          <p>A compiler can preserve the answer while optimizing away a computation. An erased “tick” therefore cannot establish a runtime lower bound by itself. Likewise, a source-to-IR theorem proves a claim about the specified intermediate representation. Extending it to native code, machine instructions, or wall-clock time requires additional modelling and refinement.</p>
+          <p>Schwichtenberg’s work with Ratiu on proof decoration motivates making computational relevance explicit. Mugda2 still has to prove its own erasure and cost theorems for its chosen language.</p>
+          <p class="source">Primary source: <a href="https://www.mathematik.uni-muenchen.de/~schwicht/papers/mints09/decokcp.pdf">Ratiu &amp; Schwichtenberg, <cite>Decorating proofs</cite></a>.</p>
+          <details><summary>Where do stream processors fit?</summary><p>A processor’s input demand <em>L(n)</em> bounds how many inputs it inspects to produce its first <em>n</em> outputs. Its work bound <em>W(n)</em> counts computation under a specified evaluation and sharing model. Demand can compose as <em>L<sub>F</sub>(L<sub>G</sub>(n))</em> under appropriate contracts; that formula does not also bound work. A work composition theorem must account for both processors, sharing, and overhead. Guarded or clocked recursion is a later candidate when this becomes a primary use case.</p></details>
+        </article>
+        <article class="lesson" id="intermediate-check">
+          <span class="lesson-number">2.5 / A useful design test</span>
+          <h3>Can we replace a component without reopening the client?</h3>
+          <p>For a sized recursive visitor, hide the helper’s body. For the queue client, change the representation. For an extracted program, erase the logical evidence. In each case, ask exactly which theorem allows the boundary to be crossed.</p>
+          <div class="note blue"><strong>The first complete result</strong><p>M5A targets one finite-data program using an abstract component, with checked correctness, termination, and an upper cost contract, followed by behaviour- and cost-adequate extraction to the stated IR. Streams, lower bounds, and more ambitious inference are separate extensions. A small complete result supplies a solid base for them.</p></div>
+        </article>
+      </section>
+      <section class="chapter advanced" id="advanced" aria-labelledby="advanced-title">
+        <header class="chapter-head">
+          <div class="eyebrow">03 / Advanced · Inspect the foundations</div>
+          <h2 id="advanced-title">Every boundary needs a theorem.</h2>
+          <p>This level assumes some familiarity with dependent types or formal verification. It explains the proposed proof obligations and the questions that experiments must resolve before the core is fixed.</p>
+        </header>
+        <article class="lesson" id="equality">
+          <span class="lesson-number">3.1 / A foundational choice <span class="pill open">Open decision</span></span>
+          <h3>Which equality serves the language?</h3>
+          <p>Type checking needs <strong>definitional equality</strong>: the conversion relation used to identify terms by the calculus’s computation rules. Users also reason with <strong>propositional equality</strong> or path types. The design of those structures affects transport, pattern matching, normalization, and the shape of the core.</p>
+          <p>Cubical type theory gives computational content to univalence and higher paths. Homotopy type theory studies types with this richer equality structure. These ideas are relevant when equivalence and transport materially simplify the intended mathematics or abstraction proofs. “More recent” is not a useful ordering of foundations; the relevant question is which capabilities the project needs.</p>
+          <div class="table-wrap"><table>
+            <caption>Candidate foundations for the M1.5 comparison—not a list of implemented Mugda2 modes.</caption>
+            <thead><tr><th>Candidate</th><th>What we investigate</th><th>Equality policy</th></tr></thead>
+            <tbody>
+              <tr><td>Minimal intensional Id</td><td>Explicit abstraction and simulation records as the control.</td><td>No additional rule deriving unrestricted K/UIP for general object-language identity types.</td></tr>
+              <tr><td>Observational type theory</td><td>Extensional reasoning with the exact computational rules of a specified OTT.</td><td>In the Pujet–Leray–Tabareau theory, proof irrelevance and the appropriate UIP are intentional.</td></tr>
+              <tr><td>Cubical / univalent</td><td>Computational transport and univalent organization of modular abstractions.</td><td>General paths retain higher structure; unrestricted UIP is not an admissible blanket rule.</td></tr>
+            </tbody>
+          </table></div>
+          <p><strong>UIP</strong> means uniqueness of identity proofs; <strong>K</strong> is a closely related identity-elimination principle. A blanket test requiring every candidate to reject them would contradict the named OTT candidate. Regression expectations must therefore be indexed by the chosen equality theory.</p>
+          <p>Combining a strict, proof-irrelevant equality with general higher paths is a further design. It needs distinct equality notions and explicit interaction rules. It cannot be obtained by silently using Lean equality for some object-language paths.</p>
+          <p>The experiment uses the same abstract client, equations, opacity boundaries, and cost contract in each candidate. It records proof effort, generated term size, conversion behaviour, checking cost, and additional semantic obligations. If richer options show no decisive advantage within the experiment, the current plan keeps the intensional control as the provisional target.</p>
+          <p class="source">Primary sources: <a href="https://pujet.fr/pdf/toplas25_cicobs.pdf">Pujet, Leray &amp; Tabareau, <cite>Observational Equality Meets CIC</cite>, §2.3</a>; <a href="https://agda.readthedocs.io/en/latest/language/cubical.html">Cubical Agda documentation</a>. Protocol: <a href="EXPERIMENTS.md">EXP-A</a>.</p>
+          <details><summary>Parametric, guarded, and directed ideas address different questions</summary><p><strong>Internal parametricity</strong> supports reasoning about uniformity across abstract parameters. <strong>Guarded recursion</strong> organizes productive recursive behaviour through controlled observations. A <strong>directed cost order</strong> compares computations quantitatively; in a simple deterministic reading, one computation has the same specified behaviour and costs no more than another. General directed higher type theory has a broader purpose. These are possible research ingredients, not interchangeable successors to cubical type theory.</p><p>Each additional ingredient needs a demonstrated use case and a soundness argument for its interaction with the selected fragment. The project’s distinct target is the combination of modular termination, abstraction, and cost.</p></details>
+        </article>
+        <article class="lesson" id="recursion">
+          <span class="lesson-number">3.2 / A core design choice <span class="pill open">Open decision</span></span>
+          <h3>Does sized recursion need a native rule?</h3>
+          <p>The certificate visitor is a concrete requirement for the <em>surface language</em>. It is not a proof that the trusted core needs a new recursion principle. A translation may encode its descent using standard inductive recursors or accessibility proofs.</p>
+          <p>The experiment therefore compares two realizations of the same program and interfaces. The translation approach must expose its generated proof arguments and equation lemmas. The native approach must expose its additional typing, size, and computation rules. Both must preserve the opaque helper boundary.</p>
+          <div class="two-col">
+            <div class="card"><p class="eyebrow">Translation</p><h4>What does the target already support?</h4><p>Measure generated evidence, checking effort, erased code, and whether the required equations compute definitionally or require explicit rewriting.</p></div>
+            <div class="card"><p class="eyebrow">Native rule</p><h4>What does the core gain?</h4><p>Identify a required capability or practical improvement, then account for conversion, substitution, size irrelevance, and the new semantic proof burden.</p></div>
+          </div>
+          <p>A useful outcome can be “translation meets the requirements.” A useful negative result can be a minimal example where the specified computation rule cannot be delivered without weakening another obligation. An experiment that remains inconclusive does not justify treating a new rule as sound.</p>
+          <div class="note research"><strong>Dependent patterns are part of the theory.</strong><p>Matching exposes constructor information that refines indices and contexts. The elaborator must justify those refinements and preserve first-match semantics. It must not strengthen an index assumption in a way that invents recursive descent. Known exploits become reason-specific regression cases; their rejection complements the metatheorem rather than replacing it.</p></div>
+          <p class="source">Further reading: <a href="https://pujet.fr/pdf/irrelevant_accessibility.pdf"><cite>Definitional Proof Irrelevance Made Accessible</cite></a>; <a href="https://drops.dagstuhl.de/entities/document/10.4230/LIPIcs.FSCD.2026.21"><cite>Constructing (Co)inductive Types via Large Sizes</cite></a>. Their results concern their stated calculi; the proposed Mugda2 combination has additional obligations. Protocol: <a href="EXPERIMENTS.md">EXP-B</a>.</p>
+        </article>
+        <article class="lesson" id="proof-boundary">
+          <span class="lesson-number">3.3 / The trust contract <span class="pill planned">Planned</span></span>
+          <h3>Four obligations establish different facts.</h3>
+          <p>Mugda2 is planned as an <strong>object language implemented and formalized in Lean</strong>. Its <code>HasType</code> judgment describes object-language derivations. Lean checks proofs about that judgment; it does not make an arbitrary choice of object-language rules consistent.</p>
+          <div class="table-wrap"><table>
+            <thead><tr><th>Obligation</th><th>Claim for a stated fragment</th><th>Why it matters</th></tr></thead>
+            <tbody>
+              <tr><td>Checker soundness</td><td>Accepted checking in a well-formed environment implies the declarative typing judgment.</td><td>The algorithm follows the specified rules. Imported environments must also be checked or justified.</td></tr>
+              <tr><td>Semantic soundness</td><td>The rules support the claimed consistency and normalization result, or the stated productivity property for coinductive observations.</td><td>The rules themselves justify the promised meaning.</td></tr>
+              <tr><td>Conversion correctness</td><td>Accepted conversion is valid; exhaustion is unknown; well-typed terms in the supported decidable fragment are decidable with sufficient budget.</td><td>Resource limits are separated from mathematical inequality.</td></tr>
+              <tr><td>Elaboration correctness</td><td>Surface declarations elaborate to typed core terms while preserving the specified semantics and defining equations.</td><td>A checked core term must still express the source program’s intended meaning.</td></tr>
+            </tbody>
+          </table></div>
+          <div class="code-label"><span>One of these theorem shapes</span><span>Schematic Lean notation</span></div>
+          <pre><code><span class="syntax-key">theorem</span> recheck_sound
+  (env_ok : WfEnv Γ)
+  (accepted : recheck Γ t A = .accepted) :
+  HasType Γ t A
+
+<span class="syntax-comment">-- A separate theorem/model must justify HasType's semantics.</span></code></pre>
+          <p>The theorem above could also hold for a badly designed declarative calculus. The semantic obligation is therefore essential. Likewise, mathematical sufficient-budget completeness does not promise that every check finishes within a small practical budget.</p>
+          <p>Each extension is versioned. A new feature either translates into the existing verified fragment with a proved correspondence, or extends its rules and re-establishes the affected obligations. An M2 proof for the initial fragment does not automatically cover later sizes, coinduction, cost modalities, or extraction.</p>
+          <div class="architecture" aria-label="Proposed checking and host-mathematics boundaries">
+            <div class="architecture-row">
+              <div class="architecture-node"><strong>People &amp; agents</strong><small>Supply programs, annotations, proofs, and candidate certificates.</small></div>
+              <div class="architecture-node"><strong>Elaborator &amp; search</strong><small>Produce explicit core artifacts; expose obligations and immutable snapshots.</small></div>
+            </div>
+            <div class="architecture-node checker"><strong>Independent checking boundary</strong><small>Core artifacts are rechecked under a versioned object calculus. Lean checks its metatheorems and the separate host certificate-checker theorems.</small></div>
+            <div class="architecture-row">
+              <div class="architecture-node"><strong>Object-language guarantees</strong><small>Apply only to the supported fragment, stated semantics, and audited assumptions.</small></div>
+              <div class="architecture-node"><strong>Host Lean mathematics</strong><small>A proved interpretation, translation, or certificate theorem supplies the bridge.</small></div>
+            </div>
+            <p class="architecture-caption">Planned architecture. Adding a Lake dependency makes Lean definitions available; it does not automatically identify them with Mugda2 types or proofs.</p>
+          </div>
+          <p>A release should name its supported fragment, theorem statements, dependency versions, axiom closure, executable endpoint, and unresolved assumptions. Eliminating <code>sorry</code> is necessary for the stated proof discipline; an explicit dependency and axiom audit tells us more than a source-text search alone.</p>
+        </article>
+        <article class="lesson" id="science">
+          <span class="lesson-number">3.4 / The application programme <span class="pill planned">Planned</span></span>
+          <h3>Use long executions to stress short explanations.</h3>
+          <p>The Avis–Friedmann work studies exponential lower bounds for Cunningham’s cyclic pivot rule. The project’s existing Lean formalization is the intended application anchor. Mugda2’s M6 must pin that development, inspect the exact theorem and assumptions, and verify its dependency closure before making a release claim about integration.</p>
+          <p>The state must include memory: a policy or basis together with a cyclic cursor. Two states with the same basis and different cursors can select different next candidates. A simulation that forgets the cursor may preserve feasible solutions while failing to preserve the prescribed execution.</p>
+          <h4>A small symbolic certificate, explained honestly</h4>
+          <p>Consider the teaching recurrence <em>T(0) = 0</em> and <em>T(k + 1) = 2T(k) + 1</em>. Its solution is <em>T(n) = 2<sup>n</sup> − 1</em>. A checker can verify <em>n + 1</em> recurrence records without enumerating the <em>2<sup>n</sup> − 1</em> execution events. If each value <em>T(k)</em> is stored in binary, the record values use O(n²) bits in total, and straightforward doubling checks take O(n²) bit operations.</p>
+          <p>For a real pivot-rule certificate, verifying the arithmetic is only one part. Phase invariants must establish legal pivots, the correct entry and exit states, cursor updates, and the claimed recurrence. A uniform construction and induction theorem are required for an all-<em>n</em> statement.</p>
+          <div class="note research"><strong>What a compact-certificate milestone must prove</strong><p>Soundness of the restricted checker; a bound on encoded instance and certificate size; a separate construction-cost bound; a bit-cost bound for checking; and a uniform all-parameter theorem. “Polynomial in <em>n</em>” only transfers to polynomial in encoded length after proving the needed relation between those parameters. Termination of the checker is a different property.</p></div>
+          <h4>Exact values need a uniqueness argument</h4>
+          <p>An executable evaluator may propose a rational policy value vector <em>v</em>. A Lean checker can verify <em>(I − P<sub>π</sub>)v = r<sub>π</sub></em>. To conclude that this is the specified policy value, the system must also have a unique solution—for example, by an invertibility or nonterminal transience theorem. For <em>P = [1]</em> and <em>r = 0</em>, every value solves the equation, so equation checking alone is insufficient.</p>
+          <h4>A complementary upper bound <span class="pill open">Research target</span></h4>
+          <p>The roadmap proposes an upper bound of order O(m² H log(2H)) on successful policy switches (pivots). It is a target to formalize, not a theorem established by this guide. The intended setting is a finite maximizing total-reward MDP on nonterminal states, with nonnegative substochastic transitions, exact policy evaluation, strict improving switches, and cyclic sweeps covering all <em>m</em> state-action pairs. Inspections and accepted switches are different events; an inspection-cost claim needs its own statement.</p>
+          <div class="equation">1 ≤ w<sub>s</sub> ≤ H,&nbsp;&nbsp; ∑<sub>t</sub> P(s, a, t)w<sub>t</sub> ≤ w<sub>s</sub> − 1<small>For every available action at every nonterminal state; H ≥ 1.</small></div>
+          <p>The drift condition supplies a bound on expected remaining transitions. In a one-state illustration, stay with probability 1 − δ and terminate with probability δ. Setting <em>w = H = 1/δ</em> gives <em>(1 − δ)H = H − 1</em>. With <em>δ = 2<sup>−n</sup></em>, the horizon is exponential even though the denominator has only <em>n + 1</em> bits. This one-action illustration has no policy-iteration lower bound; it explains why “polynomial in the horizon” need not mean “polynomial in input bits.”</p>
+          <p>Combining the proposed upper bound with the existing lower bound requires a proved correspondence of models, schedules, and measured events. General transport, compressed certificates, and the horizon theorem can develop in parallel after the shared interfaces exist.</p>
+          <p class="source">Application sources: <a href="https://arxiv.org/abs/1305.3944">Avis &amp; Friedmann, <cite>An Exponential Lower Bound for Cunningham’s Rule</cite></a>; <a href="https://prove2.me/missions/Exponential_lower_bounds_for_Cunningham%E2%80%99s_rule">the formalization mission</a>. Proposed work and dependencies: <a href="../MILESTONES.md">M6–M9.5</a>.</p>
+        </article>
+        <article class="lesson" id="engineering">
+          <span class="lesson-number">3.5 / Requirements before implementation</span>
+          <h3>Specify the commitments. Investigate the unknowns.</h3>
+          <p>Requirements engineering is particularly valuable here: a single ambiguous rule can invalidate the language’s purpose. We can specify outcomes, interfaces, proof obligations, examples, cost models, and acceptance evidence before production implementation. We cannot predeclare the answer to an open mathematical question.</p>
+          <div class="table-wrap"><table>
+            <thead><tr><th>Document</th><th>Question it answers</th><th>How it changes</th></tr></thead>
+            <tbody>
+              <tr><td>This concept guide</td><td>Why does the project exist, and how do its ideas fit together?</td><td>Examples and explanations evolve with the design.</td></tr>
+              <tr><td><a href="../REQUIREMENTS.md">Requirements</a></td><td>What must a supported feature guarantee, and what evidence demonstrates that?</td><td>Stable IDs; explicit revisions when scope or meaning changes.</td></tr>
+              <tr><td><a href="EXPERIMENTS.md">Experiment protocols</a></td><td>Which observations can resolve an open architecture decision?</td><td>Freeze the comparison before evaluating candidates.</td></tr>
+              <tr><td><a href="../MILESTONES.md">Milestones</a></td><td>When do we attempt each result, and what does it depend on?</td><td>Scheduling responds to evidence without silently weakening gates.</td></tr>
+            </tbody>
+          </table></div>
+          <p>Before a core fragment is implemented, its specification must define syntax, binding and substitution, environments, universes, typing, conversion, computation, and supported recursion. Before the service is implemented, its protocol must define snapshots, outcomes, budgets, diagnostics, and candidate isolation. These are subsequent design artifacts; the educational guide is not a substitute for a formal calculus.</p>
+          <p>Work proceeds in small complete slices. Specify a tiny fragment and its examples; implement it; establish its proof obligations; exercise the public interface; then extend it under the same discipline. Counterexamples and failed experiments are useful outputs because they identify a boundary the specification must respect.</p>
+          <div class="note"><strong>A requirement an agent can work against</strong><p>“Improve termination checking” is too vague. A concrete task names the opaque-helper fixture, states which contract must suffice, fixes the expected diagnostic for a false size contract, identifies the supported fragment, and requires independent rechecking of the emitted artifact. A candidate patch may propose a change to the requirement, but it must not silently rewrite the goal to pass.</p></div>
+          <h4>Carry the practical lessons from Lean into the workbench</h4>
+          <p>The plan pairs the checking boundary with structured goal states, reproducible dependencies, useful diagnostics, and one interface shared by human and agent tools. Reusable libraries should expose small, discoverable contracts and examples. A candidate proof should be replayable from its recorded snapshot. These are concrete product requirements; they do not depend on choosing Lean's object-level equality for Mugda2.</p>
+          <p>The immediate deliverable is this design baseline. The first language release target is the finite M5A pipeline. A successful research extension must earn its own theorem and integration gate, whether it adds large sizes, higher paths, stream contracts, or probabilistic costs.</p>
+        </article>
+      </section>
+      <section class="chapter" id="glossary" aria-labelledby="glossary-title">
+        <header class="chapter-head"><div class="eyebrow">Reference / A small vocabulary</div><h2 id="glossary-title">Terms worth keeping distinct.</h2></header>
+        <dl class="glossary">
+          <div><dt>Dependent type</dt><dd>A type that can depend on a value, allowing specifications such as a vector of length n or a result accompanied by evidence.</dd></div>
+          <div><dt>Size index</dt><dd>Logical information that bounds a datatype approximation or observation depth. Its meaning is fixed by a calculus; it is not automatically runtime or encoded length.</dd></div>
+          <div><dt>Termination / productivity</dt><dd>Termination guarantees completion of a finite computation. Productivity guarantees that finite observations of a potentially infinite value can be produced.</dd></div>
+          <div><dt>Potential</dt><dd>A nonnegative mathematical account attached to a state. Changes in potential explain how a sequence pays for expensive operations.</dd></div>
+          <div><dt>Abstraction function</dt><dd>A map from concrete states to their mathematical meaning. A simulation theorem explains how operations respect that meaning.</dd></div>
+          <div><dt>Parametricity</dt><dd>A disciplined uniformity property across parameters or representations. Its exact form depends on the quantifier, relation, and calculus.</dd></div>
+          <div><dt>Elaboration / rechecking</dt><dd>Elaboration constructs an explicit core artifact from surface syntax. Independent rechecking validates the artifact against the core rules.</dd></div>
+          <div><dt>Conversion</dt><dd>The calculus’s judgment of definitional equality, used during typing. A budgeted implementation may return unknown even when an answer exists mathematically.</dd></div>
+          <div><dt>Object language / host language</dt><dd>Mugda2 is the language being designed. Lean is the proposed implementation and metatheory host. Crossing between their claims requires an explicit bridge.</dd></div>
+          <div><dt>Erasure / cost adequacy</dt><dd>Erasure removes irrelevant material. Cost adequacy proves a stated relation between the work measured before and after a transformation.</dd></div>
+          <div><dt>Certificate</dt><dd>Structured evidence inspected by a checker. Its validity, encoded size, generation cost, and checking cost are separate properties.</dd></div>
+          <div><dt>Verified fragment</dt><dd>The precise subset of a language covered by named theorems under recorded assumptions. Features outside that subset do not inherit its guarantees.</dd></div>
+        </dl>
+      </section>
+      <section class="chapter" id="references" aria-labelledby="references-title">
+        <header class="chapter-head"><div class="eyebrow">Reference / Follow the ideas</div><h2 id="references-title">A reading route into the research.</h2><p>These are sources and inspirations, not a claim that their calculi have already been combined. Start with the first three lineages; use the later papers to investigate specific design questions.</p></header>
+        <ol class="sources">
+          <li><a href="https://arxiv.org/abs/1012.4896">Andreas Abel — MiniAgda: Integrating Sized and Dependent Types</a><span>2010. An introduction by example to sized programming and its interaction with dependent patterns.</span></li>
+          <li><a href="https://www.cs.cmu.edu/~janh/papers/hah12cav.pdf">Jan Hoffmann, Klaus Aehlig &amp; Martin Hofmann — Resource Aware ML</a><span>2012. Type-based amortized resource analysis. Jan Hoffmann and Martin Hofmann are different researchers.</span></li>
+          <li><a href="https://www.mathematik.uni-muenchen.de/~schwicht/papers/mints09/decokcp.pdf">Diana Ratiu &amp; Helmut Schwichtenberg — Decorating proofs</a><span>Computational relevance and extraction: identifying proof information that need not survive into execution.</span></li>
+          <li><a href="https://lean-lang.org/doc/reference/latest/Elaboration-and-Compilation/">The Lean Language Reference — Elaboration and Compilation</a><span>Official documentation of the separation between surface elaboration, kernel checking, and compilation. The “latest” documentation is a moving reference; implementation work must pin a toolchain.</span></li>
+          <li><a href="https://arxiv.org/abs/2107.04663">Niu, Sterling, Grodin &amp; Harper — A Cost-Aware Logical Framework</a><span>Calf. A foundational account of separating computational behaviour from cost.</span></li>
+          <li><a href="https://runmingl.github.io/paper/afat.pdf">Grodin, Li &amp; Harper — Abstraction Functions as Types</a><span>POPL 2026. Modular specifications of behaviour and cost in univalent dependent type theory.</span></li>
+          <li><a href="https://arxiv.org/abs/2607.08547">Grodin, Chu, Li, Jan Hoffmann &amp; Harper — Potential Functions as Types</a><span>2026 preprint. Potentials in dependent types and the Giralf approach. A source of research ideas rather than a guarantee of general automatic cost inference.</span></li>
+          <li><a href="https://arxiv.org/abs/2307.05938">Grodin, Niu, Sterling &amp; Harper — Decalf</a><span>A directed, effectful cost-aware framework. Intrinsic ordering supports quantitative comparisons of computations.</span></li>
+          <li><a href="https://pujet.fr/pdf/toplas25_cicobs.pdf">Pujet, Leray &amp; Tabareau — Observational Equality Meets CIC</a><span>TOPLAS 2025. The exact observational candidate matters; §2.3 explains its UIP behaviour.</span></li>
+          <li><a href="https://agda.readthedocs.io/en/latest/language/cubical.html">Cubical Agda — Official language documentation</a><span>Paths, transport, composition, Glue, and higher inductive types. A practical reference for the cubical experiment.</span></li>
+          <li><a href="https://arxiv.org/abs/2005.11290">Cavallo &amp; Harper — Internal Parametricity for Cubical Type Theory</a><span>How relational uniformity can become internal language structure. Ordinary polymorphic syntax alone does not provide this full theory.</span></li>
+          <li><a href="https://drops.dagstuhl.de/entities/document/10.4230/LIPIcs.FSCD.2026.21">Laarakker, Otten &amp; van den Berg — Constructing (Co)inductive Types via Large Sizes</a><span>FSCD 2026. A research direction for size semantics; computational and integration obligations must be checked against the exact paper.</span></li>
+          <li><a href="https://pujet.fr/pdf/irrelevant_accessibility.pdf">Definitional Proof Irrelevance Made Accessible</a><span>LICS 2026. A source for two-level recursion and accessibility experiments, with its own stated theory and translation.</span></li>
+          <li><a href="https://arxiv.org/abs/2102.01969">Kristensen, Møgelberg &amp; Vezzosi — Greatest HITs: Higher inductive types in coinductive definitions via induction under clocks</a><span>A possible later direction combining guarded recursion and cubical structure. It is not a prerequisite for the initial finite fragment.</span></li>
+          <li><a href="https://epub.ub.uni-muenchen.de/111061/">Köpp &amp; Schwichtenberg — Lookahead Analysis in Exact Real Arithmetic with Logical Methods</a><span>Input-demand analysis for extracted stream computations. Lookahead and computational work remain separate contracts.</span></li>
+          <li><a href="https://arxiv.org/abs/1305.3944">David Avis &amp; Oliver Friedmann — An Exponential Lower Bound for Cunningham’s Rule</a><span>The mathematical application anchor. The language must preserve the exact prescribed execution and the event being counted.</span></li>
+        </ol>
+        <div class="next-panel">
+          <h3>Turn the explanation into a checked commitment.</h3>
+          <p>The requirements baseline gives the project stable obligations. The experiment protocols turn open design choices into reproducible comparisons. The milestone plan schedules the work.</p>
+          <div class="next-links"><a href="../REQUIREMENTS.md">Read the requirements →</a><a href="EXPERIMENTS.md">Inspect the experiments →</a><a href="../MILESTONES.md">Follow the roadmap →</a></div>
+        </div>
+        <footer class="footer"><span>Mugda2 · Concept guide v0.1 · 7 November 2026</span><span>Design baseline: <a href="https://github.com/kmehltretter82/mugda2/tree/d228f6e982136ab55ae300ff3a06d038341669d9">d228f6e</a> · <a href="#main">Back to the idea ↑</a></span></footer>
+      </section>
+    </div>
+  </main>
+</div>
+<script>
+(() => {
+  'use strict';
+  const byId = (id) => document.getElementById(id);
+  const format = (n) => n.toLocaleString('en-US');
+  const bits = byId('countdown-bits');
+  function updateCountdown() {
+    const n = Number(bits.value);
+    byId('bits-label').textContent = n + (n === 1 ? ' bit' : ' bits');
+    byId('bit-count').textContent = format(n);
+    byId('step-count').textContent = format(2 ** n - 1);
+  }
+  bits.disabled = false;
+  bits.addEventListener('input', updateCountdown);
+  updateCountdown();
+
+  const queue = {front: [], rear: [], next: 1, actual: 0, assigned: 0};
+  function renderItems(id, items) {
+    const target = byId(id);
+    const nodes = items.map((item) => {
+      const span = document.createElement('span');
+      span.className = 'token';
+      span.textContent = String(item);
+      return span;
+    });
+    if (nodes.length === 0) {
+      const empty = document.createElement('span');
+      empty.className = 'empty';
+      empty.textContent = 'empty';
+      nodes.push(empty);
+    }
+    target.replaceChildren(...nodes);
+  }
+  function renderQueue(message) {
+    renderItems('queue-front', queue.front);
+    renderItems('queue-rear', queue.rear);
+    byId('queue-actual').textContent = format(queue.actual);
+    byId('queue-potential').textContent = format(queue.rear.length);
+    byId('queue-assigned').textContent = format(queue.assigned);
+    byId('queue-balance').textContent = format(queue.actual) + ' spent + ' +
+      format(queue.rear.length) + ' stored = ' + format(queue.assigned) + ' assigned';
+    byId('dequeue').disabled = queue.front.length + queue.rear.length === 0;
+    byId('enqueue').disabled = queue.front.length + queue.rear.length >= 16;
+    if (message) byId('queue-message').textContent = message;
+  }
+  function enqueueItem(announce) {
+    if (queue.front.length + queue.rear.length >= 16) return;
+    const item = queue.next++;
+    queue.rear.unshift(item);
+    queue.actual += 1;
+    queue.assigned += 2;
+    if (announce) renderQueue('Enqueued ' + item + '. Actual cost: 1; potential change: +1; amortized charge: 2.');
+  }
+  function resetQueue() {
+    queue.front = [];
+    queue.rear = [];
+    queue.next = 1;
+    queue.actual = 0;
+    queue.assigned = 0;
+  }
+  byId('enqueue').addEventListener('click', () => enqueueItem(true));
+  byId('dequeue').addEventListener('click', () => {
+    if (queue.front.length + queue.rear.length === 0) return;
+    let transfers = 0;
+    if (queue.front.length === 0) {
+      transfers = queue.rear.length;
+      queue.front = queue.rear.slice().reverse();
+      queue.rear = [];
+    }
+    const item = queue.front.shift();
+    const actual = transfers + 1;
+    queue.actual += actual;
+    queue.assigned += 1;
+    renderQueue('Removed ' + item + '. ' +
+      (transfers ? 'Transferred ' + transfers + ' items. ' : '') +
+      'Actual cost: ' + actual + '; potential change: ' +
+      (transfers ? '−' + transfers : '0') + '; amortized charge: 1.');
+  });
+  byId('queue-reset').addEventListener('click', () => {
+    resetQueue();
+    renderQueue('The queue is empty. Each enqueue will assign two units: one spent now, one stored.');
+  });
+  byId('queue-preset').addEventListener('click', () => {
+    resetQueue();
+    enqueueItem(false);
+    enqueueItem(false);
+    enqueueItem(false);
+    renderQueue('Three enqueues cost 3 and store 3 potential. Dequeue now to see that potential pay for the reversal.');
+  });
+  byId('queue-actions').hidden = false;
+  renderQueue();
+
+  const printButton = byId('print-guide');
+  printButton.hidden = false;
+  printButton.addEventListener('click', () => window.print());
+
+  const navigation = Array.from(document.querySelectorAll('.sidebar nav a'));
+  const navigationTargets = navigation.map((link) =>
+    document.getElementById(link.getAttribute('href').slice(1))).filter(Boolean);
+  function markCurrent(id) {
+    navigation.forEach((link) => {
+      if (link.getAttribute('href') === '#' + id) link.setAttribute('aria-current', 'location');
+      else link.removeAttribute('aria-current');
+    });
+  }
+  markCurrent(location.hash.slice(1) || 'main');
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver((entries) => {
+      const visible = entries.filter((entry) => entry.isIntersecting)
+        .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+      if (visible.length) markCurrent(visible[0].target.id);
+    }, {rootMargin: '-95px 0px -65% 0px', threshold: 0});
+    navigationTargets.forEach((target) => observer.observe(target));
+  }
+  navigation.forEach((link) => link.addEventListener('click', () =>
+    markCurrent(link.getAttribute('href').slice(1))));
+})();
+</script>
+</body>
+</html>

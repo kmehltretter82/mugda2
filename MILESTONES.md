@@ -5,6 +5,10 @@
 
 Synthesized from [idea1.txt](idea1.txt), [idea2.txt](idea2.txt), the foundational literature synthesis, the external design audit, and the Lean 4 baseline in [`kmehltretter82/mugda` @ `b0c5b53`](https://github.com/kmehltretter82/mugda/tree/b0c5b53).
 
+**Requirements and teaching baseline:** [REQUIREMENTS.md](REQUIREMENTS.md) states proposed acceptance obligations and release slices; [docs/EXPERIMENTS.md](docs/EXPERIMENTS.md) defines the controlled M1.5 protocols; [the HTML concept guide](docs/index.html) explains the project at introductory, intermediate, and advanced levels. These documents specify planned work and do not establish a Mugda2 theorem or select an equality foundation.
+
+**Proposed first-release alignment (L1):** M1, the selected finite M2 fragment, a minimal M3 checking interface, the finite portion of M4, and M5A through its specified IR endpoint form the first complete language pipeline. Full workbench panels, coinductive streams, and native-backend integration are separately staged. Smaller previews identify their missing L1 obligations. The larger research roadmap below retains those later ambitions; its dates are estimates.
+
 **Identity:** *A dependent programming language and workbench in Lean 4 for constructive algorithms with checked termination, modular abstraction, and computational cost (upper bounds, lower bounds, and cost preservation), with strong support for agents constructing the proofs.*
 
 **Distinctive research question:**
@@ -20,7 +24,7 @@ Synthesized from [idea1.txt](idea1.txt), [idea2.txt](idea2.txt), the foundationa
 |---|---|
 | **1. Modular reasoning about cost and abstraction** (Grodin–Li–Harper POPL '26; Giralf/Calf '26; Decalf) | **Main distinguishing capability:** components expose mathematical behavior *and* resource guarantees across abstraction boundaries; extended from Giralf's structural recursion to sized recursion and exponential bounds. |
 | **2. Parametric sized programming** ($\forall^p i$, Laarakker–Otten–van den Berg '26; Cavallo–Harper) | **Central termination & language-research question:** size uniformity across opaque interfaces (`preprocess : ∀ᵖ i. Certificate i → Certificate i`) without leaking sizes into runtime behavior or carrying large termination proofs. |
-| **3. Candidate equality foundations** (evaluated at M1.5):<br>• *Minimal intensional `Id` + explicit simulations* (control)<br>• *Observational Type Theory (OTT)* (Pujet–Tabareau TOPLAS '25)<br>• *Cubical / univalent foundations* | **Selected by evidence at M1.5:** OTT provides pointwise function/quotient equality (with definitional proof irrelevance and provable UIP); intensional/cubical preserve non-trivial identity/path structure (where global K is rejected). |
+| **3. Candidate equality foundations** (evaluated at M1.5):<br>• *Minimal intensional `Id` + explicit simulations* (control)<br>• *Observational Type Theory (OTT)* (Pujet–Leray–Tabareau TOPLAS '25)<br>• *Cubical / univalent foundations* | **Selected by evidence at M1.5:** OTT provides pointwise function/quotient equality (with definitional proof irrelevance and provable UIP); intensional/cubical preserve non-trivial identity/path structure (where global K is rejected). |
 | **4. Two-level accessibility / recursion translation** (*Definitional Proof Irrelevance Made Accessible*, LICS '26) | **Core architectural mechanism:** convenient unfolding and recursion in the frontend translated into explicit evidence checked by a decidable core. |
 | **5. Guarded / clocked recursion** (*Greatest HITs*) | **Secondary track:** relevant when productive stream processors with latency/work bounds become a focus. |
 | **6. Directed cost ordering (Decalf)** vs. general simplicial HoTT | **Targeted adoption:** adopt Decalf-style intrinsic cost ordering on types (supporting upper/lower bounds and later randomized pivot rules); defer general synthetic higher category theory. |
@@ -114,12 +118,14 @@ flowchart TD
 # Phase I — Language Track
 
 ## M0 — Framing, Equality Policy, and Proof-Boundary ADRs
+Start with the proposed v0.1 requirements baseline and the three-level HTML guide. Review stable requirement IDs and acceptance evidence, then freeze the experiment manifests (examples, required equations, opacity boundaries, metrics, budgets, and decision owner) before M1.5. Formal calculus and service-protocol specifications remain subsequent deliverables; an explanatory guide does not replace them.
+
 Commit short architecture decision records (ADRs) resolving foundational boundaries up front:
 
 1. **ADR-01: Conditional Equality Policy (resolving the OTT vs. no-K conflict):**
    The status of UIP / Axiom K (`examples/k.ma`) is **indexed by the equality foundation chosen at M1.5**:
    - *Branch A (Intensional `Id` or Cubical path types):* unrestricted K / UIP must **not** be derivable for general identity/path types; `k.ma` on unconstrained `Set` must be **rejected** (and only accepted when restricted to types proved to be h-sets or in a separate strict proposition sort).
-   - *Branch B (Observational Type Theory, Pujet–Tabareau TOPLAS '25):* observational equality lives in a definitionally proof-irrelevant sort where UIP is **provable by design**; under this branch, UIP on the observational identity type is **accepted** as an intended theorem of the foundation, not treated as a soundness bug.
+   - *Branch B (Observational Type Theory, Pujet–Leray–Tabareau TOPLAS '25):* observational equality lives in a definitionally proof-irrelevant sort where UIP is **provable by design**; under this branch, UIP on the observational identity type is **accepted** as an intended theorem of the foundation, not treated as a soundness bug.
    - *Branch C (Two-equality theory combining strict/observational equality with higher paths):* treated as a separate research extension requiring explicit interaction and elimination rules—never assumed implicitly.
 
 2. **ADR-02: The Lean Proof Boundary (distinguishing two senses of "in Lean 4"):**
@@ -136,7 +142,7 @@ Commit short architecture decision records (ADRs) resolving foundational boundar
 4. **ADR-04: Four Separate Quantitative Judgments:**
    Input/output bit-size, construction cost, execution cost, and certificate size/checking cost are distinct judgments that never silently stand in for one another.
 
-**Exit:** ADRs `01`–`04` committed in `docs/adr/`.
+**Exit:** requirements and teaching baseline reviewed; experiment protocol frozen; ADRs `01`–`04` committed in `docs/adr/` with explicit decision status. The concrete equality and recursion selections remain gated by M1.5.
 
 ---
 
@@ -163,7 +169,7 @@ Run a 3–4 week controlled experiment across fixed benchmarks before selecting 
 
 - **Compared candidates for Experiment A (Modular data-structure & cost swap):**
   1. *Control:* **Minimal intensional `Id` + explicit simulation/abstraction records** in Lean 4.
-  2. *Candidate 1:* **Observational Type Theory (OTT)** (Pujet–Tabareau style proof-irrelevant observational equality + quotient/extensionality rules).
+  2. *Candidate 1:* **Observational Type Theory (OTT)** (Pujet–Leray–Tabareau style proof-irrelevant observational equality + quotient/extensionality rules).
   3. *Candidate 2:* **Univalent / cubical abstraction** (Grodin–Li–Harper POPL '26 style, tested via Cubical Agda / prototype).
 - **Compared candidates for Experiment B (Sized certificate normalizer across opaque `preprocess : ∀ᵖ i. Certificate i → Certificate i`):**
   1. *Approach A:* Two-level accessibility/recursor translation (LICS '26 style: permissive frontend unfolding translated to a decidable core).
@@ -225,13 +231,13 @@ Split into a **mandatory core gate (M5A)** and **separately gated extensions (M5
 
 ### M5A — Mandatory Gate: Finite Modular Cost, Abstraction, and Cost-Adequate Extraction
 - **Type-level credits, debits, and potentials** (Hofmann / Giralf lineage) for finite inductive and sized programs ($F_{\text{cost}}$), supporting upper-bound compositional verification across abstract interfaces (*Abstraction Functions as Types*).
-- **Decorated extraction to `Mugda2.IR`** (Ratiu–Schwichtenberg): erase proofs, `Size` / $\forall^p i$, and ghost cost credits; compile `Mugda2.IR` to native binaries via Lean 4's LCNF/C backend.
+- **Decorated extraction to `Mugda2.IR`** (Ratiu–Schwichtenberg): erase proofs, `Size` / $\forall^p i$, and ghost cost credits under the fragment's relevance rules. The mandatory proof endpoint is evaluation in the specified IR. Native compilation via Lean 4's LCNF/C backend is separately staged and records compiler/runtime assumptions; an IR theorem does not itself establish native runtime or machine-allocation bounds.
 - **Two mandatory extraction theorems (value + cost adequacy):**
   1. *Behavioral erasure correctness:*
      $$e \Downarrow_{\text{src}} v \implies \operatorname{erase}(e) \Downarrow_{\text{IR}} \operatorname{erase}(v).$$
   2. *Cost adequacy theorem:*
      $$e \Downarrow_{\text{src}}^{c_{\text{src}}} v \implies \operatorname{erase}(e) \Downarrow_{\text{IR}}^{c_{\text{IR}}} \operatorname{erase}(v) \;\land\; R_{\text{cost}}(c_{\text{src}}, c_{\text{IR}}),$$
-     where for upper bounds $c_{\text{IR}} \le c_{\text{src}}$ (erasure never increases abstract step or allocation count).
+     where the selected upper-bound model must justify $c_{\text{IR}} \le c_{\text{src}}$, or an explicitly stated overhead relation. This inequality is a proof obligation for the chosen event counts and evaluation strategy, not a generic consequence of erasure.
 - **Mandatory benchmark:** a finite-data client program (e.g., verified sorting or priority-queue client) uses an abstract component, its correctness and upper cost bound are checked compositionally against the interface, and extraction satisfies both behavioral and cost adequacy.
 
 ### M5B — Gated Extensions (Tracked Separately)
@@ -275,17 +281,18 @@ Split into a **mandatory core gate (M5A)** and **separately gated extensions (M5
 ---
 
 ## M8 — Symbolic Phase Certificates with Explicit Complexity Guarantees *(Parallel with M7, M9)*
-Demonstrate the four-quantity separation on the Avis–Friedmann hard family $G(n)$ by establishing **four explicit theorems** for a dedicated, restricted symbolic phase-certificate language (avoiding reliance on arbitrary dependent normalization):
+Demonstrate the four-quantity separation on the Avis–Friedmann hard family $G(n)$ by establishing **five explicit obligations** for a dedicated, restricted symbolic phase-certificate language (avoiding reliance on arbitrary dependent normalization):
 
 1. **Certificate Soundness:** `checkPhaseCert (G n) (C n) = true` implies the prescribed Cunningham execution from the initial state performs $\ge 2^n$ pivots.
 2. **Polynomial Encoded-Size Bound:** there is an explicit polynomial $q(n)$ such that
    $$\operatorname{bits}(G(n)) + \operatorname{bits}(C(n)) \le q(n),$$
    where $\operatorname{bits}(G(n))$ includes all rational numerators/denominators, variable/action ordering, and the initial basis/cursor state.
-3. **Polynomial Checking-Cost Bound:** the extracted certificate checker `checkPhaseCert` runs in bit-operation cost bounded by an explicit polynomial $p(n)$ (and hence polynomial in $\operatorname{bits}(G(n)) + \operatorname{bits}(C(n))$).
+3. **Polynomial Checking-Cost Bound:** the extracted certificate checker `checkPhaseCert` runs in bit-operation cost bounded by an explicit polynomial $p(n)$. To claim polynomial checking in total encoded length $N = \operatorname{bits}(G(n)) + \operatorname{bits}(C(n))$, additionally prove $n \le \operatorname{poly}(N)$ or establish the checking bound directly in $N$. The upper bound $N \le q(n)$ alone does not establish that implication.
 4. **Uniformity for all $n \ge 3$:** a constructive generator produces $C(n)$ and a Lean induction theorem proves `checkPhaseCert (G n) (C n) = true` for all $n \ge 3$.
+5. **Separate Generation-Cost Bounds:** prove explicit work bounds for generating the instance and certificate, naming the parameter and encoding. A polynomial bound in the structural parameter $n$ is not a polynomial bound in the binary input length of $n$; use an output-sensitive statement where appropriate. Constructive uniformity and polynomial output size do not establish efficient generation by themselves.
 - **Bit-encoding corollary:** with $N_n = \operatorname{bits}(G(n)) \le C n^d$ and $T_n \ge 2^n$ ($C, d > 0$), establish $T_n \ge 2^{(N_n / C)^{1/d}}$.
 
-**Exit:** Obligations 1–4 and the bit-encoding corollary are Lean-checked, and the workbench navigates executions by certified phases.
+**Exit:** Obligations 1–5 and the bit-encoding corollary are Lean-checked, and the workbench navigates executions by certified phases.
 
 ---
 
@@ -320,7 +327,7 @@ Because `M10-L` depends only on M5 while `M10-A` depends on M7/M8/M9, language f
 
 ## M11 — Flagship Result and Packaging
 - Complete the selected M10 theorem (and M9.5 synthesis) and package the Mugda2 language, verified core, cost/abstraction library, and Avis–Friedmann workbench as a reproducible Lake release.
-- **Flagship end-to-end demonstration:** a user writes an abstract specification with termination and cost contracts; an agent synthesizes the implementation, potential function, and phase certificate; Mugda2 checks all obligations in the verified core and extracts a fast native executable with proved behavioral and cost adequacy.
+- **Flagship end-to-end demonstration:** a user writes an abstract specification with termination and cost contracts; an agent synthesizes the implementation, potential function, and phase certificate; Mugda2 checks the obligations for its verified fragments and extracts to Mugda2.IR with proved behavioral and cost adequacy. Native execution uses the separately documented compilation/backend boundary; native performance is measured unless an additional preservation theorem is established.
 
 ---
 
@@ -338,6 +345,6 @@ Because `M10-L` depends only on M5 while `M10-A` depends on M7/M8/M9, language f
 | **M5B** | Lower-bound credits + stream contracts | Input-demand composition $L_{G \circ F} \le L_F \circ L_G$ + work bound $W_F$ | Monotone lookahead; specified sharing | M8, M10-L |
 | **M6** | Stateful execution + uniqueness-certified evaluator | $\operatorname{invertible}(I - P_\pi) \land (I - P_\pi)v = r_\pi \implies v = v^\pi$ | Nonterminal transience / invertibility | M7, M8, M9 |
 | **M7** | Game $\to$ MDP $\to$ $\mathbb{Q}$-LP $\to$ $\mathbb{R}$-LP simulations | Cost-preserving simulation + $\mathbb{Q} \hookrightarrow \mathbb{R}$ trajectory preservation | Nondegeneracy / ordered-field embedding | M9.5, M10-A |
-| **M8** | Restricted phase-certificate language `PhaseCert` | (1) Soundness, (2) $\operatorname{bits} \le q(n)$, (3) check cost $\le p(n)$, (4) $\forall n \ge 3$ uniformity | Explicit encoding of coefficients & cursor | M9.5, M10-A |
+| **M8** | Restricted phase-certificate language `PhaseCert` | Soundness; encoded size; checking cost with parameter relation; all-$n$ uniformity; separate generation-cost bounds | Explicit encoding of coefficients & cursor; named construction parameter | M9.5, M10-A |
 | **M9** | Cyclic Cunningham on substochastic MDPs | $\operatorname{Pivots} = O(m^2 H \log(2H))$ (Path A) or formal obstruction (Path B) | Nonterminal substochastic $P$, drift $w_s \le H$ | M9.5, M10-A |
 | **M9.5** | Combined lower + upper bound | $H \log(2H) \ge 2^n / \operatorname{poly}(n)$ on Avis–Friedmann MDPs | M7/M8 model correspondence + M9 Path A | M11 |
