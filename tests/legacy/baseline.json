@@ -1,0 +1,416 @@
+{
+  "repository": "https://github.com/kmehltretter82/mugda",
+  "revision": "b0c5b53c92673e4a7d57b218b4050690e719f0e7",
+  "files": [
+    {
+      "source": "Mugda/Core.lean",
+      "path": "Mugda2/Legacy/Core.lean",
+      "sha256": "774dba6f3353a33715b5d47b66a74840d0e7297f4d25a81671279ded325db126"
+    },
+    {
+      "source": "Mugda/Soundness.lean",
+      "path": "Mugda2/Legacy/Soundness.lean",
+      "sha256": "b8339ace1503d1445ed80fa9a602323f7f34505c09b303c53e837997a2a6bf2e"
+    },
+    {
+      "source": "Mugda/Metatheory.lean",
+      "path": "Mugda2/Legacy/Metatheory.lean",
+      "sha256": "8d2956c6f831cddde507f47eef7a43edc58f71b917913c71aba4617f70fbf093"
+    },
+    {
+      "source": "examples/Trans.ma",
+      "path": "tests/legacy/examples/Trans.ma",
+      "sha256": "a4d6af8bdd8eed8f17a6fc368443bb444dd8f77ab092fe640988917732c87388"
+    },
+    {
+      "source": "examples/acc.ma",
+      "path": "tests/legacy/examples/acc.ma",
+      "sha256": "8ce2e9ce89040537cd1d996d84fdf9dcf3d6ef887db3103993e9c9683f61a632"
+    },
+    {
+      "source": "examples/addWith.ma",
+      "path": "tests/legacy/examples/addWith.ma",
+      "sha256": "2c0a4636820ed4f15d2df8537e73af6273e2f629fea1623af2e5ae0edc0a7517"
+    },
+    {
+      "source": "examples/adm/adm1.ma",
+      "path": "tests/legacy/examples/adm/adm1.ma",
+      "sha256": "66c844cf1e7eb12c26061479e61d6b8099fc2dc50a8b8aba81a18c1239d95d89"
+    },
+    {
+      "source": "examples/adm/adm2.ma",
+      "path": "tests/legacy/examples/adm/adm2.ma",
+      "sha256": "d51d172b1a75bb9618f921a3cfd65f3c1496dfa7800fadbf5676be21cbd5caf4"
+    },
+    {
+      "source": "examples/adm/adm3.ma",
+      "path": "tests/legacy/examples/adm/adm3.ma",
+      "sha256": "55ee91cc72543f08c0cf2be1ae6050588cfa3f95e0265af0f13f4eaa694e7748"
+    },
+    {
+      "source": "examples/bad1.ma",
+      "path": "tests/legacy/examples/bad1.ma",
+      "sha256": "d7c3c66534497c31dee6a40ef40b3cf6b93b8a95333cfd53423d7a7045718c34"
+    },
+    {
+      "source": "examples/bad2.ma",
+      "path": "tests/legacy/examples/bad2.ma",
+      "sha256": "8704cd4817bdfd6c11dcfb4128e72e7c54734ea5584c3ea4aefc700bb2e5bcce"
+    },
+    {
+      "source": "examples/bad3.ma",
+      "path": "tests/legacy/examples/bad3.ma",
+      "sha256": "7b090ba0927988d147c9d94a13c66759606e1f8a81e62a0f5effcd6021c2ac23"
+    },
+    {
+      "source": "examples/bad4.ma",
+      "path": "tests/legacy/examples/bad4.ma",
+      "sha256": "1083060b706ca12bbf12bf6d05728cc8e3da24f1319531c72524dc5136cdea2b"
+    },
+    {
+      "source": "examples/bad5.ma",
+      "path": "tests/legacy/examples/bad5.ma",
+      "sha256": "d8cf4ddfb2684b4fd83380da9c07d612fd96335891d90ba74fde9ecc534c872c"
+    },
+    {
+      "source": "examples/badadm.ma",
+      "path": "tests/legacy/examples/badadm.ma",
+      "sha256": "da1515d3b43bd646cb022c35bedde0d85b556ab7de6ff9b9069c239e214dd9c1"
+    },
+    {
+      "source": "examples/badco.ma",
+      "path": "tests/legacy/examples/badco.ma",
+      "sha256": "02dce8a1d91514114f14caa0684f97be1acd8144d4d7365007d00305a0cca5ca"
+    },
+    {
+      "source": "examples/badlist.ma",
+      "path": "tests/legacy/examples/badlist.ma",
+      "sha256": "0bc22a9e72d0275d7a86ba56a39e3ceb16adffa712f86ff55e525813280cde5b"
+    },
+    {
+      "source": "examples/badpos.ma",
+      "path": "tests/legacy/examples/badpos.ma",
+      "sha256": "c639bde1bb59775062886574d1800a57e780e8d3d59697bf2035a83fa2dc181e"
+    },
+    {
+      "source": "examples/badscope.ma",
+      "path": "tests/legacy/examples/badscope.ma",
+      "sha256": "d9fbbb8d81455f0a6f812422246f8a9059c2443eb353ab7a940cacc1ed04774b"
+    },
+    {
+      "source": "examples/badscope2.ma",
+      "path": "tests/legacy/examples/badscope2.ma",
+      "sha256": "5e511ad4df8a23f0ca37a95aa2f0d411d5c3abf3eb23a7dd75165dbdcf627ec1"
+    },
+    {
+      "source": "examples/badscope4.ma",
+      "path": "tests/legacy/examples/badscope4.ma",
+      "sha256": "6c75952b88605ba167252995bf9e0f393b6e8e76e7dfbb2a6def91a967f68372"
+    },
+    {
+      "source": "examples/badscope5.ma",
+      "path": "tests/legacy/examples/badscope5.ma",
+      "sha256": "65d7e3971be5ff3806ae63e6c0bf01fe4ece5202b136e70f217e17b2839e19aa"
+    },
+    {
+      "source": "examples/badterm.ma",
+      "path": "tests/legacy/examples/badterm.ma",
+      "sha256": "0e07676e05931bbdfd8ecbd83de3179250a727dc3ae3d3cc701bcaf552519962"
+    },
+    {
+      "source": "examples/badterm2.ma",
+      "path": "tests/legacy/examples/badterm2.ma",
+      "sha256": "cba250eb818265ec1b698083e47aa253b6930f3bc378dc83e6646c24ffd88667"
+    },
+    {
+      "source": "examples/badterm3.ma",
+      "path": "tests/legacy/examples/badterm3.ma",
+      "sha256": "679cbc5f9a1141bf199c74f9850c47552203b9aa83759f251066c18d1b628b53"
+    },
+    {
+      "source": "examples/badterm4.ma",
+      "path": "tests/legacy/examples/badterm4.ma",
+      "sha256": "5a040b940ea51575a231e9d5cbeaccdf7df9d8430529a0e9a66014a2bcb35146"
+    },
+    {
+      "source": "examples/bottomcheck.ma",
+      "path": "tests/legacy/examples/bottomcheck.ma",
+      "sha256": "bd314d30af12f8defe2f9c5c79f72721b7986c24714c6b671ff5dc3e843d19b6"
+    },
+    {
+      "source": "examples/break.ma",
+      "path": "tests/legacy/examples/break.ma",
+      "sha256": "0b3204cc7cd317a95f86a1d5bc53cc10b24eb6062f27974283da662d5be85da0"
+    },
+    {
+      "source": "examples/colist.ma",
+      "path": "tests/legacy/examples/colist.ma",
+      "sha256": "effb16537370ea992c36b3bceb771f012ca972f95493686f2c39d86794745e84"
+    },
+    {
+      "source": "examples/counterexamples/cody_nowraps.ma",
+      "path": "tests/legacy/examples/counterexamples/cody_nowraps.ma",
+      "sha256": "503bb51f0280198e50fc429dc14de4e68b6ea9c38ecbe81c71a18ca9be2d7b05"
+    },
+    {
+      "source": "examples/counterexamples/cody_simplified.ma",
+      "path": "tests/legacy/examples/counterexamples/cody_simplified.ma",
+      "sha256": "dc513df955fc91bd8ec00989bd00ffbaa7ca6a1a32542cb06c6ced3e78ab41ea"
+    },
+    {
+      "source": "examples/counterexamples/llet_bug.ma",
+      "path": "tests/legacy/examples/counterexamples/llet_bug.ma",
+      "sha256": "bfb9f6eb6e7d7eac8e0056aa31472a93649652aa0d46f98b7e848538f9432036"
+    },
+    {
+      "source": "examples/counterexamples/loop_wrapped.ma",
+      "path": "tests/legacy/examples/counterexamples/loop_wrapped.ma",
+      "sha256": "f7035bc1e4d98f04222c0ce796fe4dc9a4aa6bef20dbda5f762c131dd19e3486"
+    },
+    {
+      "source": "examples/counterexamples/snat_mat_bug.ma",
+      "path": "tests/legacy/examples/counterexamples/snat_mat_bug.ma",
+      "sha256": "76f0c3f2e81dc710d9aff4815180c2c6d854e4ffac8b1eb0b526e7edb831d52e"
+    },
+    {
+      "source": "examples/counterexamples/stree_mat_bug.ma",
+      "path": "tests/legacy/examples/counterexamples/stree_mat_bug.ma",
+      "sha256": "9dc9cda3a730c9f15769db30ad7996201978b42dc56d564d4f6f3f9f3ef420d8"
+    },
+    {
+      "source": "examples/crazy.ma",
+      "path": "tests/legacy/examples/crazy.ma",
+      "sha256": "4d4e7669caf9466cb0aed279f47ec884762c3e5c4e9846935b85795d9be45754"
+    },
+    {
+      "source": "examples/crazys.ma",
+      "path": "tests/legacy/examples/crazys.ma",
+      "sha256": "641bbbb1ec8ac6ec048f2172c0e124f10ce0135f710013b3017633f1403b8385"
+    },
+    {
+      "source": "examples/def.ma",
+      "path": "tests/legacy/examples/def.ma",
+      "sha256": "a69c4df562e0dd4a714f0c7b3f90c1b6061b6a2f77dee6ce5c640a9d5f1733d7"
+    },
+    {
+      "source": "examples/eqSize.ma",
+      "path": "tests/legacy/examples/eqSize.ma",
+      "sha256": "a503500a5a7b01c114601fe79fd947d8775b20cffbd1f260dd639c94fe1ddcba"
+    },
+    {
+      "source": "examples/fib.ma",
+      "path": "tests/legacy/examples/fib.ma",
+      "sha256": "ae89dd1dc4ed09b51783707d0ebe0bb18df8bd005fb035a1d7c79a18f1f23ea5"
+    },
+    {
+      "source": "examples/goodterm.ma",
+      "path": "tests/legacy/examples/goodterm.ma",
+      "sha256": "47b0e0cf830cbb89b742fe3a804d5c7aeaa1c95b61df2c9c1758de3d7eb09d33"
+    },
+    {
+      "source": "examples/hang.ma",
+      "path": "tests/legacy/examples/hang.ma",
+      "sha256": "6e3c022649b19f437594e65fd32ad1ae70d2e03503824320d4f7947e9c88d339"
+    },
+    {
+      "source": "examples/ho.ma",
+      "path": "tests/legacy/examples/ho.ma",
+      "sha256": "1aca4c7bd38839deea07a4f756612eaea528d1fe78c8c4d700ff387c36cc1c62"
+    },
+    {
+      "source": "examples/inconsistentAssumption.ma",
+      "path": "tests/legacy/examples/inconsistentAssumption.ma",
+      "sha256": "c1ac7e8d0f4bc600305f55bc3bd0be56f87823fbbef256a501470ae8d0a2e5e1"
+    },
+    {
+      "source": "examples/infbranch.ma",
+      "path": "tests/legacy/examples/infbranch.ma",
+      "sha256": "a61a87a177697d9ebc2a42160321bf2903f7ff90917ad540a5386ce260ce521d"
+    },
+    {
+      "source": "examples/inverse.ma",
+      "path": "tests/legacy/examples/inverse.ma",
+      "sha256": "50b192c223258a39558d088f3b2511f18f2c722c603a60101086b031d7cf6590"
+    },
+    {
+      "source": "examples/k.ma",
+      "path": "tests/legacy/examples/k.ma",
+      "sha256": "87e609f4e1ccf49048d5145cc31e7d4f3b72d804221f6a0901b861d78f1379bc"
+    },
+    {
+      "source": "examples/list.ma",
+      "path": "tests/legacy/examples/list.ma",
+      "sha256": "1131bd157336c2f3aadc28cfd12d6e690e2d5c9ab06fdeb13989bd99b5b8f37c"
+    },
+    {
+      "source": "examples/loop.ma",
+      "path": "tests/legacy/examples/loop.ma",
+      "sha256": "21dad520d25b93ef4b74b82fe96173ec49ea71675887e0303ec749d4c7e19781"
+    },
+    {
+      "source": "examples/loop2.ma",
+      "path": "tests/legacy/examples/loop2.ma",
+      "sha256": "1f4ac3b1d6a1ea3c6848fecac36fb187eb3f493c5da340e75e55bc133fb9f50a"
+    },
+    {
+      "source": "examples/loop3.ma",
+      "path": "tests/legacy/examples/loop3.ma",
+      "sha256": "a18a25ee5ffec75c9c26c2c280080ec68b25e07f98aeb570fd30ec8538fc3a19"
+    },
+    {
+      "source": "examples/mut.ma",
+      "path": "tests/legacy/examples/mut.ma",
+      "sha256": "e2e1955bb30bb320895756bb941d04b329f2d40b6cfa435852e61bc625c2fd33"
+    },
+    {
+      "source": "examples/nat.ma",
+      "path": "tests/legacy/examples/nat.ma",
+      "sha256": "0a30f2538065bb3c68903107ca2859d95a88408f1fff2e9c89036431a8fce198"
+    },
+    {
+      "source": "examples/natpair.ma",
+      "path": "tests/legacy/examples/natpair.ma",
+      "sha256": "0847a54fd450989d8eecb11bd8db1ce0c56aa76258b1401e88541d2b3177bf87"
+    },
+    {
+      "source": "examples/natstream.ma",
+      "path": "tests/legacy/examples/natstream.ma",
+      "sha256": "a575df5f2357347bdd0a825b47866d46c98b8b64c78588925f27eb41092aad05"
+    },
+    {
+      "source": "examples/ord.ma",
+      "path": "tests/legacy/examples/ord.ma",
+      "sha256": "48ebf94886362fe9119b0c2cbfe3b56db78f3cc3edde5d7bae4c4713b387baec"
+    },
+    {
+      "source": "examples/pair.ma",
+      "path": "tests/legacy/examples/pair.ma",
+      "sha256": "95637553d1337bdcee4f9ac7070b34bae97a3013bf83a8c7ed79d6631c1534df"
+    },
+    {
+      "source": "examples/perf.ma",
+      "path": "tests/legacy/examples/perf.ma",
+      "sha256": "4efb8ea402b3c6a6afe14940be45ba4492bd1d63574b7a8d36649ac1930d23ba"
+    },
+    {
+      "source": "examples/proc.ma",
+      "path": "tests/legacy/examples/proc.ma",
+      "sha256": "19a817a328a2fbadbcdfed8cfc4ab49d583975429d433ef5f7e7bbef3d8fa01f"
+    },
+    {
+      "source": "examples/procs.ma",
+      "path": "tests/legacy/examples/procs.ma",
+      "sha256": "3f10a0196cf0aee6022fdc861afd9e4baa306d69fcf978b012c241539b8fa768"
+    },
+    {
+      "source": "examples/qsort.ma",
+      "path": "tests/legacy/examples/qsort.ma",
+      "sha256": "67159ca8c319c318ecb95112ff5d6119dc31cfc6c22c753c0e912abfad79fb2d"
+    },
+    {
+      "source": "examples/rose.ma",
+      "path": "tests/legacy/examples/rose.ma",
+      "sha256": "662cdff644bb25da9b2cd35655df3cc35c8367a3f563d254ad5c7ad00177c615"
+    },
+    {
+      "source": "examples/scolist.ma",
+      "path": "tests/legacy/examples/scolist.ma",
+      "sha256": "1ad73987ce59cb20f21cb502d74f0f5a74228135add192c09d18d3fe9344561f"
+    },
+    {
+      "source": "examples/set.ma",
+      "path": "tests/legacy/examples/set.ma",
+      "sha256": "419b542189d8b1618c8b9a994b992d7bdf8018cd52c76d7773da22f06d024d3b"
+    },
+    {
+      "source": "examples/sigma.ma",
+      "path": "tests/legacy/examples/sigma.ma",
+      "sha256": "769159917eb46d2949623a8e9f42186850b515170fbe9ce6b94d3cbdc21d76fa"
+    },
+    {
+      "source": "examples/simple.ma",
+      "path": "tests/legacy/examples/simple.ma",
+      "sha256": "f91018260cea0f91b971b23d9069c8d8f5fe16531b9276f1642b596c7fc8be12"
+    },
+    {
+      "source": "examples/slist.ma",
+      "path": "tests/legacy/examples/slist.ma",
+      "sha256": "5b6a8eaecb42a67252dcc1a4ff313ca64cbd39235d3cb20c289b1a37adaf67f7"
+    },
+    {
+      "source": "examples/snat.ma",
+      "path": "tests/legacy/examples/snat.ma",
+      "sha256": "9e6bc39d8175f311eecd5ef0fc88311b6b57572d8d4400dd58a0886fefac6f2e"
+    },
+    {
+      "source": "examples/sord.ma",
+      "path": "tests/legacy/examples/sord.ma",
+      "sha256": "1f18df953d00191712a3348d85097197c52bf3abc329c121496128b75c37915d"
+    },
+    {
+      "source": "examples/sort.ma",
+      "path": "tests/legacy/examples/sort.ma",
+      "sha256": "c7472d6fb3bed0f91a8362a0beb7f18c3c33550360d96185190990fce4496de6"
+    },
+    {
+      "source": "examples/sp.ma",
+      "path": "tests/legacy/examples/sp.ma",
+      "sha256": "b534579fd296c326948949350da50abbd3f0081fd47e03eb35af60a9b74c9f0b"
+    },
+    {
+      "source": "examples/sp3.ma",
+      "path": "tests/legacy/examples/sp3.ma",
+      "sha256": "50fa301b4a9de8587b0df9ff6e24cd042e595a8d9a1ed82a7e7cd35521665ee1"
+    },
+    {
+      "source": "examples/sp4.ma",
+      "path": "tests/legacy/examples/sp4.ma",
+      "sha256": "4486bbab0c30b6dd5f9c6afcff6fe5b3898ec995ae3940e11fac342ad1011de8"
+    },
+    {
+      "source": "examples/sqsort.ma",
+      "path": "tests/legacy/examples/sqsort.ma",
+      "sha256": "af0ec019463de3cf4e5dc832d8910400e107ff5848542da3fd5f04eb25e9b22a"
+    },
+    {
+      "source": "examples/str.ma",
+      "path": "tests/legacy/examples/str.ma",
+      "sha256": "ab0add87990874dbe1353bfb7d51f51fddc13b69830c239734ee68dfbcc8bf7e"
+    },
+    {
+      "source": "examples/stream.ma",
+      "path": "tests/legacy/examples/stream.ma",
+      "sha256": "e2e4686a3570d5d20a2a19cae98eb8bb11f07e761cc87a6236a93488e5fb2298"
+    },
+    {
+      "source": "examples/stree.ma",
+      "path": "tests/legacy/examples/stree.ma",
+      "sha256": "e40c13bd5007e0ff6fb27c7fddd7319324d2cfbb25741bf8ec29b5cb4ebf91bd"
+    },
+    {
+      "source": "examples/subtype.ma",
+      "path": "tests/legacy/examples/subtype.ma",
+      "sha256": "b2c7d75db9578235e787b26540af853e80f2916703cbbb524bf874937db1d995"
+    },
+    {
+      "source": "examples/sum.ma",
+      "path": "tests/legacy/examples/sum.ma",
+      "sha256": "1b4b2a6ff2c1a1764d8a208b2d8fa3e78c552479dad4b5f153cbbe2abd5aa356"
+    },
+    {
+      "source": "examples/tree.ma",
+      "path": "tests/legacy/examples/tree.ma",
+      "sha256": "bf77f61949198d5c87e0bad0adb557312edf0976907b1eabdce8720423065cbf"
+    },
+    {
+      "source": "examples/usp.ma",
+      "path": "tests/legacy/examples/usp.ma",
+      "sha256": "012b64e5fdfc5c3429644472bb37e8db9253f34bcfc791139f203bbb78362c19"
+    },
+    {
+      "source": "examples/vec.ma",
+      "path": "tests/legacy/examples/vec.ma",
+      "sha256": "934adef39f9b8c7a3fa065dfd4887048bb93b8e8b7c4611413aa9dd5a2a879a8"
+    }
+  ]
+}

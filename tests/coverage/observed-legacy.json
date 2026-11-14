@@ -1,0 +1,215 @@
+{
+  "schemaVersion": "mugda2.coverage-observation.v1",
+  "role": "Observed legacy binary behavior only; never the semantic oracle.",
+  "checkerBinarySha256": "e30d52a53250d4109cee869c5bbc85b006ab448fcf56a8a7174ad79f9831a368",
+  "toolchain": "leanprover/lean4:v4.35.0",
+  "observations": [
+    {
+      "id": "coverage/nullary-empty",
+      "sourceSha256": "be80ba105645f400f9e2b063d4c80f16e9365a0eda7465084f6cd0adc51dfb9f",
+      "exitCode": 0,
+      "status": "accepted"
+    },
+    {
+      "id": "coverage/nullary-nat",
+      "sourceSha256": "ef5ad17964b5ee90aa7d0a2b43bf7c13a23e905a45d81da2869c722309636cda",
+      "exitCode": 0,
+      "status": "accepted"
+    },
+    {
+      "id": "coverage/nullary-complete",
+      "sourceSha256": "0e643426b5fbefe5bde932bfaf0a1fb498bc97fa4e981968bb5d3294fd4909a3",
+      "exitCode": 0,
+      "status": "accepted"
+    },
+    {
+      "id": "coverage/nat-missing-zero",
+      "sourceSha256": "c2531c2acd71873ab62fc0a914dcd749b92a551a7632c336ab205a06f16fdafd",
+      "exitCode": 0,
+      "status": "accepted"
+    },
+    {
+      "id": "coverage/nat-missing-succ",
+      "sourceSha256": "c6b77f5704c0dc2e1be989b35b08cf4c59e49d7fc41e09e060520256aa983545",
+      "exitCode": 0,
+      "status": "accepted"
+    },
+    {
+      "id": "coverage/nat-complete",
+      "sourceSha256": "ecb19f91b4323d20f31399b10967df8800cf66c1d618f4565846c51d138c1f2f",
+      "exitCode": 0,
+      "status": "accepted"
+    },
+    {
+      "id": "coverage/nested-missing",
+      "sourceSha256": "41f635e996eaf4c972322652085038d0f13bed54fe777ceabe60c0480e66bcbf",
+      "exitCode": 0,
+      "status": "accepted"
+    },
+    {
+      "id": "coverage/nested-complete",
+      "sourceSha256": "f264502e5c18bf9c8db81253f7d240ae392394e706e991e17d82210d5bbb5d32",
+      "exitCode": 0,
+      "status": "accepted"
+    },
+    {
+      "id": "coverage/matrix-correlated-missing",
+      "sourceSha256": "c84c6bc9f910822042521b01118ca4801fcceb5c17a3b5f216f1c374f211110f",
+      "exitCode": 0,
+      "status": "accepted"
+    },
+    {
+      "id": "coverage/matrix-complete",
+      "sourceSha256": "bfacd8c1dff54e15efad9a94763de9a739e9b3e91324bef8e76ce225dc5ac3f2",
+      "exitCode": 0,
+      "status": "accepted"
+    },
+    {
+      "id": "coverage/polymorphic-wildcard",
+      "sourceSha256": "64e90e69553556b5f45ff51df58e4e3d6c110c1697bb28d62722944860fc0d2b",
+      "exitCode": 0,
+      "status": "accepted"
+    },
+    {
+      "id": "coverage/empty-first-argument",
+      "sourceSha256": "43c72dbab6cb8a696abe0427bb9c1a4ddfeb425269b39dcc4e8832101eb327a9",
+      "exitCode": 0,
+      "status": "accepted"
+    },
+    {
+      "id": "coverage/empty-later-argument",
+      "sourceSha256": "08f860319307062ac836a521cb079c5147c8656c3260763b20431db06ab76472",
+      "exitCode": 0,
+      "status": "accepted"
+    },
+    {
+      "id": "coverage/empty-constructor-field",
+      "sourceSha256": "0e5e1e7fdab081306b686f031125be767fa79c853e179f3b65c6a3176d3da336",
+      "exitCode": 0,
+      "status": "accepted"
+    },
+    {
+      "id": "coverage/recursive-empty",
+      "sourceSha256": "474b6568779af73de64cbdaae1a92353a74d32835a1dcb0abb3d15b49ab96b9a",
+      "exitCode": 0,
+      "status": "accepted"
+    },
+    {
+      "id": "coverage/recursive-empty-constructor",
+      "sourceSha256": "37ec2c9bd1ef97e0fb72d41f44ea9fb10fd0b3873e5c76618b695428a0ed7ad0",
+      "exitCode": 0,
+      "status": "accepted"
+    },
+    {
+      "id": "coverage/indexed-vec-zero-complete",
+      "sourceSha256": "fb928cb10db407b37fa408aecbac3c5e61693d210ef834650b809711dd948194",
+      "exitCode": 0,
+      "status": "accepted"
+    },
+    {
+      "id": "coverage/indexed-vec-zero-missing",
+      "sourceSha256": "f4db75f433334fed6f5dfb39093893867a78852b91b3f6dd0fa01372fefb63f3",
+      "exitCode": 0,
+      "status": "accepted"
+    },
+    {
+      "id": "coverage/indexed-equality-empty",
+      "sourceSha256": "8480ab813bdd33006ccf4cb216b8ad6d168ff331626e737cbefda754d7df1d7d",
+      "exitCode": 0,
+      "status": "accepted"
+    },
+    {
+      "id": "coverage/sized-complete",
+      "sourceSha256": "3c331a4a655a507f6093144f6f378a9396ccde0b0ec6023fba056079627867c6",
+      "exitCode": 0,
+      "status": "accepted"
+    },
+    {
+      "id": "coverage/sized-missing",
+      "sourceSha256": "a20dd5a33195b2eca6835250a8d97ff5ff52a639be690023faccc12a367afce9",
+      "exitCode": 0,
+      "status": "accepted"
+    },
+    {
+      "id": "coverage/size-wildcard",
+      "sourceSha256": "f36b65fa9aa111268fe9f83f53d859e1926cbe5417bb245e3bbeae508c3950e9",
+      "exitCode": 0,
+      "status": "accepted"
+    },
+    {
+      "id": "coverage/bare-successor-size",
+      "sourceSha256": "75f8efe2127a3489a442abf765f4770e7066d6f15ff627aacf0e4ff1ffa717ae",
+      "exitCode": 1,
+      "status": "rejected",
+      "diagnostic": {
+        "category": "sizePatternCompleteness",
+        "message": "type of missing: size pattern incomplete",
+        "span": {
+          "startByte": 0,
+          "endByte": 173,
+          "scope": "document"
+        }
+      }
+    },
+    {
+      "id": "coverage/unforced-dot",
+      "sourceSha256": "8b62a90a5e609d1dd63eef532305dc6c1912fb6a2a61aaedf585269fb8c0636b",
+      "exitCode": 1,
+      "status": "rejected",
+      "diagnostic": {
+        "category": "typeMismatch",
+        "message": "invalid: not instantiated",
+        "span": {
+          "startByte": 0,
+          "endByte": 175,
+          "scope": "document"
+        }
+      }
+    },
+    {
+      "id": "coverage/first-match",
+      "sourceSha256": "04206fc7e6c3cace2508e06f217fdc947d09fdda0dab3bbb42b46c447bb017c4",
+      "exitCode": 0,
+      "status": "accepted"
+    },
+    {
+      "id": "coverage/neutral-first-match-barrier",
+      "sourceSha256": "0d585241fc870c6c5a3c369279df2c6594f78f829f3d82d4986994b342aa47a9",
+      "exitCode": 1,
+      "status": "rejected",
+      "diagnostic": {
+        "category": "typeMismatch",
+        "message": "bad: leqVal error",
+        "span": {
+          "startByte": 0,
+          "endByte": 300,
+          "scope": "document"
+        }
+      }
+    },
+    {
+      "id": "coverage/short-row-lambda",
+      "sourceSha256": "a305c7673816f4a9330fa13397723f639da158c8e611dd447f4ba27f099e1a0c",
+      "exitCode": 0,
+      "status": "accepted"
+    },
+    {
+      "id": "coverage/zero-pattern-lambda",
+      "sourceSha256": "a262cf31736e4a15f748b9f4cbde7da57d6e7f44d65a90b1180cad85287c4c1b",
+      "exitCode": 0,
+      "status": "accepted"
+    },
+    {
+      "id": "coverage/mutual-coverage-failure",
+      "sourceSha256": "55a139a7464b5bb3c31c58db1e7a31bb64860cb346dbf79dab1f62926448cbb5",
+      "exitCode": 0,
+      "status": "accepted"
+    },
+    {
+      "id": "coverage/mutual-coverage-recovery",
+      "sourceSha256": "addf995222b85da6d3d26f934b2d8f914220088ce6ae9baebdb5152d00029151",
+      "exitCode": 0,
+      "status": "accepted"
+    }
+  ]
+}

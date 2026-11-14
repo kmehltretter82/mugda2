@@ -1,0 +1,36 @@
+name: Lean verification
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install elan and the repository's pinned Lean toolchain
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -o "$RUNNER_TEMP/elan-init.sh"
+          sh "$RUNNER_TEMP/elan-init.sh" -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+          "$HOME/.elan/bin/elan" toolchain install "$(cat lean-toolchain)"
+      - name: Build, audit all project declarations, and run regressions
+        run: make test
+      - name: Preserve proof, checker, and host-control evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: lean-verification-evidence
+          path: |
+            .lake/build/audit/axioms.json
+            .lake/build/reports/checker-results.json
+            .lake/build/reports/coverage-matrices.json
+            .lake/build/experiments/registration.json
+            .lake/build/experiments/runtime-results.json
+          if-no-files-found: error

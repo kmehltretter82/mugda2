@@ -1,6 +1,20 @@
 # Mugda2 — Controlled Design Experiments
 
-**Status:** Proposed protocol v0.1 for M1.5. No experiments described here have been executed, no candidate has been selected, and this document establishes no new type theory or Mugda2 theorem.
+**Status:** Proposed protocol v0.1 for M1.5. The host-Lean queue benchmark in
+[`Mugda2/Giralf.lean`](../Mugda2/Giralf.lean) is preparatory evidence: it proves
+client correctness and a common cost bound across two implementations. The frozen
+cross-foundation EXP-A comparison, EXP-B comparison, and integration probe have
+not been run; no candidate has been selected. The queue benchmark is separate from
+the small `GExpr` calculus and its source-to-IR erasure theorem.
+
+**Implementation update (2026-11-14):** [host controls](experiments/README.md)
+now derive the queue client bound from operation contracts and verify finite
+certificate traversal through abstract height-preserving helpers. A
+[host-control timing registration](experiments/host-controls-v2.json) fixes their
+local source snapshot and prospective measurement procedure. Candidate object
+rules and toolchain pins remain unresolved; this does not freeze or complete
+the cross-foundation comparison. Host proofs and finite observations retain
+their explicit boundaries.
 
 These protocols support requirements engineering before implementation. They operationalize [MILESTONES.md](../MILESTONES.md) and the decisions and acceptance criteria in [REQUIREMENTS.md](../REQUIREMENTS.md).
 

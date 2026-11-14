@@ -1,0 +1,507 @@
+{
+  "schemaVersion": "mugda2.coverage-spec.v1",
+  "version": 1,
+  "role": "Semantic coverage specifications and conservative bridge expectations; historical observations are separate.",
+  "diagnosticsProvisional": [],
+  "unknownPolicy": "Unresolved typed coverage is unknown with reason unsupportedCoverage and stage coverage. Budget exhaustion is separately unknown/outOfFuel. Neither is a coverage counterexample.",
+  "cases": [
+    {
+      "id": "coverage/nullary-empty",
+      "path": "tests/coverage/nullary-empty.ma",
+      "priority": "P0",
+      "budget": {},
+      "reason": "An empty telescope has exactly one input tuple; result emptiness does not excuse a missing row.",
+      "semanticIntended": {
+        "status": "rejected",
+        "diagnostic": "coverage"
+      },
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "coverage"
+      },
+      "missingInput": [],
+      "promotion": "Registered in the main CLI suite with an independently reviewed semantic expectation."
+    },
+    {
+      "id": "coverage/nullary-nat",
+      "path": "tests/coverage/nullary-nat.ma",
+      "priority": "P0",
+      "budget": {},
+      "reason": "Nullary definitions require a body regardless of their result datatype.",
+      "semanticIntended": {
+        "status": "rejected",
+        "diagnostic": "coverage"
+      },
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "coverage"
+      },
+      "missingInput": [],
+      "promotion": "Registered in the main CLI suite with an independently reviewed semantic expectation."
+    },
+    {
+      "id": "coverage/nullary-complete",
+      "path": "tests/coverage/nullary-complete.ma",
+      "priority": "P0",
+      "budget": {},
+      "reason": "An explicit empty pattern row covers the empty input tuple.",
+      "semanticIntended": {
+        "status": "accepted"
+      },
+      "expected": {
+        "status": "accepted"
+      },
+      "promotion": "Registered in the main CLI suite with an independently reviewed semantic expectation."
+    },
+    {
+      "id": "coverage/nat-missing-zero",
+      "path": "tests/coverage/nat-missing-zero.ma",
+      "priority": "P0",
+      "budget": {},
+      "reason": "The zero constructor is missing.",
+      "semanticIntended": {
+        "status": "rejected",
+        "diagnostic": "coverage"
+      },
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "coverage"
+      },
+      "missingInput": [
+        "zero"
+      ],
+      "promotion": "Registered in the main CLI suite with an independently reviewed semantic expectation."
+    },
+    {
+      "id": "coverage/nat-missing-succ",
+      "path": "tests/coverage/nat-missing-succ.ma",
+      "priority": "P0",
+      "budget": {},
+      "reason": "The successor constructor is missing.",
+      "semanticIntended": {
+        "status": "rejected",
+        "diagnostic": "coverage"
+      },
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "coverage"
+      },
+      "missingInput": [
+        "succ zero"
+      ],
+      "promotion": "Registered in the main CLI suite with an independently reviewed semantic expectation."
+    },
+    {
+      "id": "coverage/nat-complete",
+      "path": "tests/coverage/nat-complete.ma",
+      "priority": "P0",
+      "budget": {},
+      "reason": "All Nat constructors are covered.",
+      "semanticIntended": {
+        "status": "accepted"
+      },
+      "expected": {
+        "status": "accepted"
+      },
+      "promotion": "Registered in the main CLI suite with an independently reviewed semantic expectation."
+    },
+    {
+      "id": "coverage/nested-missing",
+      "path": "tests/coverage/nested-missing.ma",
+      "priority": "P0",
+      "budget": {},
+      "reason": "Top-level constructor presence does not cover nested arguments.",
+      "semanticIntended": {
+        "status": "rejected",
+        "diagnostic": "coverage"
+      },
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "coverage"
+      },
+      "missingInput": [
+        "succ (succ zero)"
+      ],
+      "promotion": "Registered in the main CLI suite with an independently reviewed semantic expectation."
+    },
+    {
+      "id": "coverage/nested-complete",
+      "path": "tests/coverage/nested-complete.ma",
+      "priority": "P0",
+      "budget": {},
+      "reason": "Nested specialization covers all finite Nat values.",
+      "semanticIntended": {
+        "status": "accepted"
+      },
+      "expected": {
+        "status": "accepted"
+      },
+      "promotion": "Registered in the main CLI suite with an independently reviewed semantic expectation."
+    },
+    {
+      "id": "coverage/matrix-correlated-missing",
+      "path": "tests/coverage/matrix-correlated-missing.ma",
+      "priority": "P0",
+      "budget": {},
+      "reason": "Columnwise constructor coverage does not imply tuple coverage.",
+      "semanticIntended": {
+        "status": "rejected",
+        "diagnostic": "coverage"
+      },
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "coverage"
+      },
+      "missingInput": [
+        "tt",
+        "ff"
+      ],
+      "promotion": "Registered in the main CLI suite with an independently reviewed semantic expectation."
+    },
+    {
+      "id": "coverage/matrix-complete",
+      "path": "tests/coverage/matrix-complete.ma",
+      "priority": "P0",
+      "budget": {},
+      "reason": "The first row covers all second inputs under tt; both ff branches are supplied.",
+      "semanticIntended": {
+        "status": "accepted"
+      },
+      "expected": {
+        "status": "accepted"
+      },
+      "promotion": "Registered in the main CLI suite with an independently reviewed semantic expectation."
+    },
+    {
+      "id": "coverage/polymorphic-wildcard",
+      "path": "tests/coverage/polymorphic-wildcard.ma",
+      "priority": "P1",
+      "budget": {},
+      "reason": "Wildcard columns are covered without enumerating opaque or abstract types.",
+      "semanticIntended": {
+        "status": "accepted"
+      },
+      "expected": {
+        "status": "accepted"
+      },
+      "promotion": "Registered in the main CLI suite with an independently reviewed semantic expectation."
+    },
+    {
+      "id": "coverage/empty-first-argument",
+      "path": "tests/coverage/empty-first-argument.ma",
+      "priority": "P0",
+      "budget": {},
+      "reason": "There is no closed input tuple because Empty has no constructors.",
+      "semanticIntended": {
+        "status": "accepted"
+      },
+      "expected": {
+        "status": "accepted"
+      },
+      "promotion": "Registered in the main CLI suite with an independently reviewed semantic expectation."
+    },
+    {
+      "id": "coverage/empty-later-argument",
+      "path": "tests/coverage/empty-later-argument.ma",
+      "priority": "P0",
+      "budget": {},
+      "reason": "An empty later domain makes the whole nondependent input product empty.",
+      "semanticIntended": {
+        "status": "accepted"
+      },
+      "expected": {
+        "status": "accepted"
+      },
+      "promotion": "Registered in the main CLI suite with an independently reviewed semantic expectation."
+    },
+    {
+      "id": "coverage/empty-constructor-field",
+      "path": "tests/coverage/empty-constructor-field.ma",
+      "priority": "P1",
+      "budget": {},
+      "reason": "Box is empty because every constructor requires an Empty argument.",
+      "semanticIntended": {
+        "status": "accepted"
+      },
+      "expected": {
+        "status": "accepted"
+      },
+      "promotion": "Registered in the main CLI suite with an independently reviewed semantic expectation."
+    },
+    {
+      "id": "coverage/recursive-empty",
+      "path": "tests/coverage/recursive-empty.ma",
+      "priority": "P1",
+      "budget": {},
+      "reason": "Void has no finite inductive inhabitants, despite having a constructor.",
+      "semanticIntended": {
+        "status": "accepted"
+      },
+      "expected": {
+        "status": "accepted"
+      },
+      "promotion": "The kernel now checks a constructor-closed live-sort set and proves that recursive Void has no finite inductive inhabitants."
+    },
+    {
+      "id": "coverage/recursive-empty-constructor",
+      "path": "tests/coverage/recursive-empty-constructor.ma",
+      "priority": "P1",
+      "budget": {},
+      "reason": "The roll wildcard pattern structurally covers every constructor without requiring an inhabitance proof.",
+      "semanticIntended": {
+        "status": "accepted"
+      },
+      "expected": {
+        "status": "accepted"
+      },
+      "promotion": "Registered in the main CLI suite with an independently reviewed semantic expectation."
+    },
+    {
+      "id": "coverage/indexed-vec-zero-complete",
+      "path": "tests/coverage/indexed-vec-zero-complete.ma",
+      "priority": "P1",
+      "budget": {},
+      "reason": "Only nil can inhabit Vec Nat zero; cons has an impossible successor index.",
+      "semanticIntended": {
+        "status": "accepted"
+      },
+      "expected": {
+        "status": "unknown",
+        "stage": "coverage",
+        "obligation": "Typed index refinement is required before excluding cons.",
+        "reason": "unsupportedCoverage"
+      },
+      "promotion": "Keep unknown until the named typing or emptiness obligation is implemented and checked."
+    },
+    {
+      "id": "coverage/indexed-vec-zero-missing",
+      "path": "tests/coverage/indexed-vec-zero-missing.ma",
+      "priority": "P1",
+      "budget": {},
+      "reason": "Vec Nat zero is inhabited by nil Nat.",
+      "semanticIntended": {
+        "status": "rejected",
+        "diagnostic": "coverage"
+      },
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "coverage"
+      },
+      "missingInput": [
+        "nil Nat"
+      ],
+      "promotion": "The missing nil Nat witness is realized and checked against the original Vec Nat zero telescope before rejection."
+    },
+    {
+      "id": "coverage/indexed-equality-empty",
+      "path": "tests/coverage/indexed-equality-empty.ma",
+      "priority": "P1",
+      "budget": {},
+      "reason": "No reflexivity constructor has result Eq Nat zero (succ zero).",
+      "semanticIntended": {
+        "status": "accepted"
+      },
+      "expected": {
+        "status": "unknown",
+        "stage": "coverage",
+        "obligation": "Typed impossibility of distinct constructor indices is required.",
+        "reason": "unsupportedCoverage"
+      },
+      "promotion": "Keep unknown until the named typing or emptiness obligation is implemented and checked."
+    },
+    {
+      "id": "coverage/sized-complete",
+      "path": "tests/coverage/sized-complete.ma",
+      "priority": "P1",
+      "budget": {},
+      "reason": "Both SNat shapes are covered and size dots are forced by their constructor indices.",
+      "semanticIntended": {
+        "status": "accepted"
+      },
+      "expected": {
+        "status": "accepted"
+      },
+      "promotion": "Both sized constructor shapes cover the erased overapproximation; checked dots become wildcard constraints without dropping a constructor."
+    },
+    {
+      "id": "coverage/sized-missing",
+      "path": "tests/coverage/sized-missing.ma",
+      "priority": "P1",
+      "budget": {},
+      "reason": "The ssucc branch is absent, e.g. size # and value ssucc # (szero #).",
+      "semanticIntended": {
+        "status": "rejected",
+        "diagnostic": "coverage"
+      },
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "coverage"
+      },
+      "missingInput": [
+        "#",
+        "ssucc # (szero #)"
+      ],
+      "promotion": "The successor witness at # is realized and checked against the original sized telescope before rejection."
+    },
+    {
+      "id": "coverage/size-wildcard",
+      "path": "tests/coverage/size-wildcard.ma",
+      "priority": "P1",
+      "budget": {},
+      "reason": "An opaque Size column is entirely covered by a variable.",
+      "semanticIntended": {
+        "status": "accepted"
+      },
+      "expected": {
+        "status": "accepted"
+      },
+      "promotion": "Registered in the main CLI suite with an independently reviewed semantic expectation."
+    },
+    {
+      "id": "coverage/bare-successor-size",
+      "path": "tests/coverage/bare-successor-size.ma",
+      "priority": "P1",
+      "budget": {},
+      "reason": "Existing size-pattern restriction rejects a bare successor pattern before coverage.",
+      "semanticIntended": {
+        "status": "rejected",
+        "diagnostic": "sizePatternCompleteness"
+      },
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "sizePatternCompleteness"
+      },
+      "promotion": "Registered in the main CLI suite with an independently reviewed semantic expectation."
+    },
+    {
+      "id": "coverage/unforced-dot",
+      "path": "tests/coverage/unforced-dot.ma",
+      "priority": "P1",
+      "budget": {},
+      "reason": "Dot patterns must be forced by typing constraints; a free dot is not a way to omit Nat cases.",
+      "semanticIntended": {
+        "status": "rejected",
+        "diagnostic": "typeMismatch"
+      },
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "typeMismatch"
+      },
+      "promotion": "Registered in the main CLI suite with an independently reviewed semantic expectation."
+    },
+    {
+      "id": "coverage/first-match",
+      "path": "tests/coverage/first-match.ma",
+      "priority": "P1",
+      "budget": {},
+      "reason": "A covering wildcard row may precede a constructor row; the first match must determine conversion.",
+      "semanticIntended": {
+        "status": "accepted"
+      },
+      "expected": {
+        "status": "accepted"
+      },
+      "promotion": "Registered in the main CLI suite with an independently reviewed semantic expectation."
+    },
+    {
+      "id": "coverage/neutral-first-match-barrier",
+      "path": "tests/coverage/neutral-first-match-barrier.ma",
+      "priority": "P0",
+      "budget": {},
+      "reason": "A neutral input cannot fall through an earlier constructor clause during dependent conversion.",
+      "semanticIntended": {
+        "status": "rejected",
+        "diagnostic": "typeMismatch"
+      },
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "typeMismatch"
+      },
+      "promotion": "Registered in the main CLI suite with an independently reviewed semantic expectation."
+    },
+    {
+      "id": "coverage/short-row-lambda",
+      "path": "tests/coverage/short-row-lambda.ma",
+      "priority": "P1",
+      "budget": {},
+      "reason": "A well-typed lambda RHS handles the unpatterned suffix of the input telescope.",
+      "semanticIntended": {
+        "status": "accepted"
+      },
+      "expected": {
+        "status": "accepted"
+      },
+      "promotion": "Registered in the main CLI suite with an independently reviewed semantic expectation."
+    },
+    {
+      "id": "coverage/zero-pattern-lambda",
+      "path": "tests/coverage/zero-pattern-lambda.ma",
+      "priority": "P1",
+      "budget": {},
+      "reason": "A checked lambda RHS in a zero-pattern clause covers the full function domain.",
+      "semanticIntended": {
+        "status": "accepted"
+      },
+      "expected": {
+        "status": "accepted"
+      },
+      "promotion": "Registered in the main CLI suite with an independently reviewed semantic expectation."
+    },
+    {
+      "id": "coverage/mutual-coverage-failure",
+      "path": "tests/coverage/mutual-coverage-failure.ma",
+      "priority": "P0",
+      "budget": {},
+      "reason": "One missing ff branch rejects the entire mutual block.",
+      "semanticIntended": {
+        "status": "rejected",
+        "diagnostic": "coverage"
+      },
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "coverage"
+      },
+      "missingInput": [
+        "ff"
+      ],
+      "promotion": "Registered in the main CLI suite with an independently reviewed semantic expectation."
+    },
+    {
+      "id": "coverage/mutual-coverage-recovery",
+      "path": "tests/coverage/mutual-coverage-recovery.ma",
+      "priority": "P1",
+      "budget": {},
+      "reason": "Valid definitions using the same function names can commit after a caught failed block.",
+      "semanticIntended": {
+        "status": "accepted"
+      },
+      "expected": {
+        "status": "accepted"
+      },
+      "promotion": "Registered in the main CLI suite with an independently reviewed semantic expectation."
+    }
+  ],
+  "apiScenarios": [
+    {
+      "id": "coverage/mutual-rollback-after-coverage-failure",
+      "setupAndAttempt": "tests/coverage/mutual-coverage-failure.ma",
+      "recovery": "tests/coverage/mutual-coverage-recovery.ma",
+      "setupDeclarationCount": 2,
+      "attemptedDeclarationIndex": 2,
+      "expectedFailure": {
+        "status": "rejected",
+        "diagnostic": "coverage"
+      },
+      "steps": [
+        "Parse and scope-check the complete failure source; check its first two declarations to obtain before.",
+        "Run typeCheckDeclaration defaultFuel on the third (mutual) declaration. Require coverage rejection.",
+        "From before, run tryCatch of that same attempted declaration with a pure recovery action.",
+        "Require after.sig == before.sig, after.warnings == before.warnings, after.provisional == before.provisional, after.terminationBudget == before.terminationBudget, and after.sealedData == before.sealedData.",
+        "Require lookups good and missing to remain absent in both committed and provisional signatures; inference of each function must fail.",
+        "Parse and scope-check the recovery source. From after, check only its mutual block and trailing let, without rechecking its duplicate setup declarations.",
+        "Require both functions marked checked, empty provisional state, and accepted use declaration."
+      ],
+      "limitation": "Whole-document CLI rejection alone cannot observe rollback. This scenario requires the internal TypeCheck API."
+    }
+  ]
+}

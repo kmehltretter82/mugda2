@@ -1,10 +1,10 @@
 /-
   Mugda2/Giralf.lean
   ==================
-  Pure Constructive Lean 4 Formalization of:
+  Constructive Lean 4 cost prototype inspired by:
     "Potential Functions as Types" (Giralf & Calf)
     Harrison Grodin, Ethan Chu, Runming Li, Jan Hoffmann, and Robert Harper (2026)
-  integrated with:
+  with separate prototypes for:
     - Ratiu & Schwichtenberg's Behavioral & Cost-Adequate Extraction (`REQ-COST-003`)
     - Mugda2 Experiment A (`EXP-A` in `docs/EXPERIMENTS.md`): Modular FIFO Queue
       Abstraction & Cost Swap (Batched Two-List Queue vs. Single-List Queue).
@@ -15,112 +15,10 @@
     - Every theorem is kernel-checked and verified via `#print axioms`.
 -/
 
+import Mugda2.Cost
+import Mugda2.Queue
+
 namespace Mugda2.Giralf
-
-/-!
-## §1. The Cost-Aware Logical Framework (`Calf` Core Monad & Phase Distinction)
-
-In *Calf* (Niu, Sterling, Grodin & Harper, POPL 2022) and *Potential Functions as Types*
-(Grodin, Chu, Li, Hoffmann & Harper, 2026), computations are equipped with a quantitative
-cost effect (`step c`) alongside a phase distinction (`extEq`) that erases cost in the
-behavioral/extensional phase.
--/
-
-/-- Cost-instrumented computation monad tracking a pure result `val : A` and exact
-    abstract step count `cost : Nat`. -/
-structure CostM (A : Type u) where
-  val  : A
-  cost : Nat
-  deriving Repr, DecidableEq
-
-namespace CostM
-
-/-- Return a value with zero cost. -/
-def ret (x : A) : CostM A := ⟨x, 0⟩
-
-/-- Record `c` units of abstract operational cost while returning `x`. -/
-def step (c : Nat) (x : A) : CostM A := ⟨x, c⟩
-
-/-- Sequential composition of cost-instrumented computations; costs add. -/
-def bind (m : CostM A) (k : A → CostM B) : CostM B :=
-  let r := k m.val
-  ⟨r.val, m.cost + r.cost⟩
-
-instance : Monad CostM where
-  pure := ret
-  bind := bind
-
-/-- Extensional (behavioral-phase) equivalence: ignores `cost` and compares only `val`.
-    Corresponds to the open/behavioral modality `◯` in Calf. -/
-def extEq (m₁ m₂ : CostM A) : Prop :=
-  m₁.val = m₂.val
-
-/-- Quantitative refinement (`Decalf` / `Calf` cost ordering): same behavioral result,
-    and `m₁` costs at most `m₂`. -/
-def refines (m₁ m₂ : CostM A) : Prop :=
-  m₁.val = m₂.val ∧ m₁.cost ≤ m₂.cost
-
-@[simp] theorem ret_val (x : A) : (ret x).val = x := rfl
-@[simp] theorem ret_cost (x : A) : (ret x).cost = 0 := rfl
-@[simp] theorem step_val (c : Nat) (x : A) : (step c x).val = x := rfl
-@[simp] theorem step_cost (c : Nat) (x : A) : (step c x).cost = c := rfl
-@[simp] theorem bind_val (m : CostM A) (k : A → CostM B) :
-    (bind m k).val = (k m.val).val := rfl
-@[simp] theorem bind_cost (m : CostM A) (k : A → CostM B) :
-    (bind m k).cost = m.cost + (k m.val).cost := rfl
-
-/-- Left identity law for `CostM`. -/
-theorem bind_ret_left (x : A) (k : A → CostM B) :
-    bind (ret x) k = k x := by
-  unfold bind ret
-  cases k x
-  simp [Nat.zero_add]
-
-/-- Right identity law for `CostM`. -/
-theorem bind_ret_right (m : CostM A) :
-    bind m ret = m := by
-  cases m
-  rfl
-
-/-- Associativity law for `CostM`. -/
-theorem bind_assoc (m : CostM A) (f : A → CostM B) (g : B → CostM C) :
-    bind (bind m f) g = bind m (fun x => bind (f x) g) := by
-  cases m with
-  | mk v c =>
-    simp [bind, Nat.add_assoc]
-
-/-- `step` composition law: stepping by `c₁` then `c₂` equals stepping by `c₁ + c₂`. -/
-theorem step_add (c₁ c₂ : Nat) (x : A) :
-    bind (step c₁ x) (fun y => step c₂ y) = step (c₁ + c₂) x := rfl
-
-/-- **Behavioral Noninterference (Phase Distinction):**
-    In the behavioral phase (`extEq`), charging `c` steps is invisible. -/
-theorem step_extEq_ret (c : Nat) (x : A) :
-    extEq (step c x) (ret x) := rfl
-
-/-- Quantitative refinement is reflexive. -/
-theorem refines_refl (m : CostM A) : refines m m :=
-  ⟨rfl, Nat.le_refl _⟩
-
-/-- Quantitative refinement is transitive. -/
-theorem refines_trans {m₁ m₂ m₃ : CostM A}
-    (h₁₂ : refines m₁ m₂) (h₂₃ : refines m₂ m₃) : refines m₁ m₃ :=
-  ⟨Eq.trans h₁₂.1 h₂₃.1, Nat.le_trans h₁₂.2 h₂₃.2⟩
-
-/-- Monotonicity of `bind` with respect to quantitative refinement. -/
-theorem bind_refines {m₁ m₂ : CostM A} {k₁ k₂ : A → CostM B}
-    (hm : refines m₁ m₂)
-    (hk : ∀ x, refines (k₁ x) (k₂ x)) :
-    refines (bind m₁ k₁) (bind m₂ k₂) := by
-  rcases hm with ⟨hval, hcost⟩
-  have hk_m := hk m₂.val
-  refine ⟨?_, ?_⟩
-  · rw [bind_val, bind_val, hval, hk_m.1]
-  · rw [bind_cost, bind_cost, hval]
-    exact Nat.add_le_add hcost hk_m.2
-
-end CostM
-
 /-!
 ## §2. The Physicist's View: Potential Functions, Fracture & Gluing
 
@@ -828,22 +726,6 @@ We now formalize the exact FIFO Queue benchmark from:
 - Mugda2's interactive guide (`docs/index.html`) and Experiment A (`docs/EXPERIMENTS.md`).
 -/
 
-/-- Specification predicate for `dequeue` return value vs. `contents`. -/
-def DequeueResultSpec (contents : Q → List E) (q : Q) : Option (E × Q) → Prop
-  | none         => contents q = []
-  | some (x, q') => contents q = x :: contents q'
-
-/-- Abstract modular FIFO Queue interface (`QueueModule Q E`) with an abstraction map
-    `contents : Q → List E` and cost-instrumented `enqueue` and `dequeue`. -/
-structure QueueModule (Q : Type u) (E : Type u) where
-  empty            : Q
-  enqueue          : Q → E → CostM Q
-  dequeue          : Q → CostM (Option (E × Q))
-  contents         : Q → List E
-  contents_empty   : contents empty = []
-  contents_enqueue : ∀ q x, contents (enqueue q x).val = contents q ++ [x]
-  contents_dequeue : ∀ q, DequeueResultSpec contents q (dequeue q).val
-
 /-! ### 5.1 Implementation A: Batched Two-List Queue (Physicist & Banker Amortized $O(1)$) -/
 
 /-- The batched two-list queue state `BatchedQ E`.
@@ -1003,81 +885,6 @@ end SingleListQ
 
 /-! ### 5.3 Modular Client Verification Across Representation Swap (`EXP-A` Theorem) -/
 
-/-- Generic client helper: enqueue every element of `xs` into queue `q` using module `M`. -/
-def enqueueAll (M : QueueModule Q E) : Q → List E → CostM Q
-  | q, []      => CostM.ret q
-  | q, x :: xs => do
-      let q' ← M.enqueue q x
-      enqueueAll M q' xs
-
-/-- Generic client helper: dequeue `k` elements from queue `q` using module `M`. -/
-def dequeueN (M : QueueModule Q E) : Nat → Q → CostM (List E × Q)
-  | 0,     q => CostM.ret ([], q)
-  | k + 1, q => do
-      let res ← M.dequeue q
-      match res with
-      | none         => CostM.ret ([], q)
-      | some (x, q') => do
-          let (ys, qFinal) ← dequeueN M k q'
-          CostM.ret (x :: ys, qFinal)
-
-/-- **The Shared `EXP-A` Client (`fifoRoundtrip`):**
-    Enqueues all elements of `xs` into `M.empty` and then dequeues `xs.length` elements. -/
-def fifoRoundtrip (M : QueueModule Q E) (xs : List E) : CostM (List E) := do
-  let q ← enqueueAll M M.empty xs
-  let (ys, _) ← dequeueN M xs.length q
-  CostM.ret ys
-
-/-- Behavioral lemma 1: `enqueueAll` appends `xs` to `M.contents q`, for *any* `QueueModule`. -/
-theorem contents_enqueueAll (M : QueueModule Q E) (q : Q) (xs : List E) :
-    M.contents (enqueueAll M q xs).val = M.contents q ++ xs := by
-  induction xs generalizing q with
-  | nil =>
-    simp [enqueueAll, CostM.ret_val]
-  | cons x xs ih =>
-    simp only [enqueueAll, bind, CostM.bind_val]
-    rw [ih, M.contents_enqueue, List.append_assoc, List.singleton_append]
-
-/-- Behavioral lemma 2: `dequeueN` extracts the exact prefix of length `k` when
-    `M.contents q = pref ++ suff` with `pref.length = k`, for *any* `QueueModule`. -/
-theorem dequeueN_prefix (M : QueueModule Q E) (pref suff : List E) (q : Q)
-    (hq : M.contents q = pref ++ suff) :
-    (dequeueN M pref.length q).val.1 = pref ∧
-    M.contents (dequeueN M pref.length q).val.2 = suff := by
-  induction pref generalizing q with
-  | nil =>
-    simpa [dequeueN, CostM.ret_val] using hq
-  | cons x xs ih =>
-    simp only [List.length_cons, dequeueN, bind, CostM.bind_val]
-    have hdeq := M.contents_dequeue q
-    cases hres : (M.dequeue q).val with
-    | none =>
-      rw [hres] at hdeq
-      dsimp only [DequeueResultSpec] at hdeq
-      rw [hq] at hdeq
-      contradiction
-    | some pair =>
-      rcases pair with ⟨y, q'⟩
-      rw [hres] at hdeq
-      dsimp only [DequeueResultSpec] at hdeq
-      rw [hq, List.cons_append] at hdeq
-      injection hdeq with hxy hrest
-      subst hxy
-      have ⟨ih₁, ih₂⟩ := ih q' hrest.symm
-      simp [CostM.ret_val, ih₁, ih₂]
-
-/-- **Theorem 5D — Modular Behavioral Correctness (`EXP-A` Behavioral Noninterference):**
-    For *every* implementation `M : QueueModule Q E`, the client `fifoRoundtrip M xs`
-    returns `xs` in exact FIFO order (`(fifoRoundtrip M xs).val = xs`), without inspecting
-    `M`'s private representation! -/
-theorem fifoRoundtrip_correct (M : QueueModule Q E) (xs : List E) :
-    (fifoRoundtrip M xs).val = xs := by
-  simp only [fifoRoundtrip, bind, CostM.bind_val, CostM.ret_val]
-  have henq := contents_enqueueAll M M.empty xs
-  rw [M.contents_empty, List.nil_append] at henq
-  have hdeq := dequeueN_prefix M xs [] (enqueueAll M M.empty xs).val (by simpa using henq)
-  exact hdeq.1
-
 /-- Cost lemma for `BatchedQ`: `enqueueAll` on `BatchedQ` takes exactly `xs.length` steps
     and increases `rear.length` by `xs.length`. -/
 theorem batched_enqueueAll_cost (q : BatchedQ E) (xs : List E) :
@@ -1128,9 +935,6 @@ theorem batched_fifoRoundtrip_cost_le (xs : List E) :
   have hdeq := batched_dequeueN_amortized xs.length (enqueueAll (BatchedQ.module E) BatchedQ.empty xs).val
   simp only [BatchedQ.phi_empty, Nat.zero_add] at henq_p
   omega
-
-/-- Common `EXP-A` quadratic budget `B n = n * (n + 3)` covering both implementations. -/
-def expABudget (n : Nat) : Nat := n * (n + 3)
 
 /-- `BatchedQ` satisfies the common `EXP-A` budget `cost ≤ expABudget xs.length`. -/
 theorem batched_satisfies_expABudget (xs : List E) :

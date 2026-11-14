@@ -1,0 +1,1036 @@
+{
+  "version": 1,
+  "baseline": {
+    "repository": "https://github.com/kmehltretter82/mugda",
+    "revision": "b0c5b53c92673e4a7d57b218b4050690e719f0e7",
+    "suiteSource": "Makefile"
+  },
+  "scope": "All 79 imported .ma sources have source-reviewed classifications and strict expectations justified against concrete parsing, scope, typing, admissibility, or size-change rules. Executable validation and unresolved M1 release obligations are recorded separately; this inventory alone is not a completed M1 exit record.",
+  "diagnosticPolicy": "Every asserted rejection has one exact category. An unknown outcome, a parse/scope failure instead of a semantic diagnostic, or a different diagnostic fails the case. Expectations must not be regenerated from checker output.",
+  "cases": [
+    {
+      "id": "legacy/Trans.ma",
+      "path": "tests/legacy/examples/Trans.ma",
+      "category": "SoundnessCounterexample",
+      "reason": "Trans A B unfolds recursively inside TransMu without a decreasing argument; this is an unguarded recursive type-level definition.",
+      "baselineSuite": null,
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "termination"
+      },
+      "checkingBoundary": {
+        "rule": "terminationCheckWithFuel",
+        "argument": "The recursive reference Trans A B has no decreasing argument or size witness; its self-call matrix has no strict diagonal."
+      }
+    },
+    {
+      "id": "legacy/acc.ma",
+      "path": "tests/legacy/examples/acc.ma",
+      "category": "UnsupportedTerminating",
+      "reason": "Dependent-index emptiness of Lt x zero: every Lt constructor has a successor second index. The source remains a valid total-language target; the legacy bridge cannot yet certify its indexed impossible input.",
+      "baselineSuite": "positive",
+      "expected": {
+        "status": "unknown",
+        "reason": "unsupportedCoverage",
+        "context": "coverage of notLt0: an erased coverage hole is not a checked typed input"
+      },
+      "semanticIntended": {
+        "status": "accepted"
+      }
+    },
+    {
+      "id": "legacy/addWith.ma",
+      "path": "tests/legacy/examples/addWith.ma",
+      "category": "PositiveExample",
+      "reason": "Sized natural recursion permutes arguments through an explicitly size-preserving higher-order helper.",
+      "baselineSuite": "positive",
+      "expected": {
+        "status": "accepted"
+      }
+    },
+    {
+      "id": "legacy/adm/adm1.ma",
+      "path": "tests/legacy/examples/adm/adm1.ma",
+      "category": "SourceError",
+      "reason": "Uses an ordinary data declaration indexed by Size and includes an incomplete size-only function; it does not isolate one admissibility obligation.",
+      "baselineSuite": null,
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "typeMismatch"
+      },
+      "checkingBoundary": {
+        "rule": "checkDataType/checkSType",
+        "argument": "Nat is an ordinary data declaration with Size as its index domain; checkSType rejects Size as not a Set before checking foo or foo2."
+      }
+    },
+    {
+      "id": "legacy/adm/adm2.ma",
+      "path": "tests/legacy/examples/adm/adm2.ma",
+      "category": "SourceError",
+      "reason": "Uses an ordinary data declaration indexed by Size before a size-only recursive function; the intended admissibility example is masked by the declaration.",
+      "baselineSuite": null,
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "typeMismatch"
+      },
+      "checkingBoundary": {
+        "rule": "checkDataType/checkSType",
+        "argument": "Nat is an ordinary data declaration with Size as its index domain; checkSType rejects Size as not a Set before checking foo."
+      }
+    },
+    {
+      "id": "legacy/adm/adm3.ma",
+      "path": "tests/legacy/examples/adm/adm3.ma",
+      "category": "SourceError",
+      "reason": "Contains unsupported norec/nonrec syntax, undefined Maybe/nothing/just, and an unsafe incomplete predecessor; preserve the historical source without treating its first failure as a soundness proof.",
+      "baselineSuite": null,
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "parse"
+      },
+      "checkingBoundary": {
+        "rule": "parseDeclaration",
+        "argument": "norec and nonrec are ordinary identifiers and have no declaration-production rule, so whole-file parsing fails before name or type checking."
+      }
+    },
+    {
+      "id": "legacy/bad1.ma",
+      "path": "tests/legacy/examples/bad1.ma",
+      "category": "SourceError",
+      "reason": "Reuses the datatype name Nat as its constructor name.",
+      "baselineSuite": null,
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "scope"
+      },
+      "checkingBoundary": {
+        "rule": "scopeCheckConstructor",
+        "argument": "After Nat is registered as a datatype, the constructor also named Nat is rejected as already in the signature."
+      }
+    },
+    {
+      "id": "legacy/bad2.ma",
+      "path": "tests/legacy/examples/bad2.ma",
+      "category": "SourceError",
+      "reason": "Duplicates constructor name suc and gives constructors targets Set rather than the declared datatype.",
+      "baselineSuite": null,
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "scope"
+      },
+      "checkingBoundary": {
+        "rule": "scopeCheckConstructor",
+        "argument": "The second suc constructor duplicates the first; whole-file scope checking runs before either invalid constructor target is type checked."
+      }
+    },
+    {
+      "id": "legacy/bad3.ma",
+      "path": "tests/legacy/examples/bad3.ma",
+      "category": "SourceError",
+      "reason": "The declaration const f : f = Set refers to f before its declaration.",
+      "baselineSuite": null,
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "scope"
+      },
+      "checkingBoundary": {
+        "rule": "scopeCheckTypeSig",
+        "argument": "The const body Set scopes, but its type refers to f before f is registered."
+      }
+    },
+    {
+      "id": "legacy/bad4.ma",
+      "path": "tests/legacy/examples/bad4.ma",
+      "category": "SourceError",
+      "reason": "Contains typed lambda syntax and repeated binder x; it is not a well-formed positive source fixture.",
+      "baselineSuite": null,
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "parse"
+      },
+      "checkingBoundary": {
+        "rule": "parseExpr",
+        "argument": "The parser accepts lambda followed by an identifier and arrow, but this source starts a typed lambda with an opening parenthesis."
+      }
+    },
+    {
+      "id": "legacy/bad5.ma",
+      "path": "tests/legacy/examples/bad5.ma",
+      "category": "SourceError",
+      "reason": "Contains typed lambda syntax and a clause argument for a function declared to have type Set.",
+      "baselineSuite": null,
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "parse"
+      },
+      "checkingBoundary": {
+        "rule": "parseExpr",
+        "argument": "The clause body uses a typed lambda, which is absent from the concrete expression grammar."
+      }
+    },
+    {
+      "id": "legacy/badadm.ma",
+      "path": "tests/legacy/examples/badadm.ma",
+      "category": "SoundnessCounterexample",
+      "reason": "Recursion foo ($ i) = foo i inspects a bare size without an inductive witness; at # the apparent predecessor need not descend. Reject incomplete size-pattern justification.",
+      "baselineSuite": "negative",
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "sizePatternCompleteness"
+      }
+    },
+    {
+      "id": "legacy/badco.ma",
+      "path": "tests/legacy/examples/badco.ma",
+      "category": "SourceError",
+      "reason": "BadCo is declared as unsized codata indexed by Size; Size is not a Set-valued index, so the source fails type checking before a sized-constructor obligation is reached.",
+      "baselineSuite": "negative",
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "typeMismatch"
+      }
+    },
+    {
+      "id": "legacy/badlist.ma",
+      "path": "tests/legacy/examples/badlist.ma",
+      "category": "SourceError",
+      "reason": "List is declared as unsized data indexed by Size, so the illegal index fails type checking; the intended non-successor nil constructor is not isolated.",
+      "baselineSuite": "negative",
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "typeMismatch"
+      }
+    },
+    {
+      "id": "legacy/badpos.ma",
+      "path": "tests/legacy/examples/badpos.ma",
+      "category": "PositiveExample",
+      "reason": "Active declarations use positive recursion and positive parameters; all purportedly bad constructor declarations are commented out, so this is not a positivity-negative fixture.",
+      "baselineSuite": null,
+      "expected": {
+        "status": "accepted"
+      },
+      "checkingBoundary": {
+        "rule": "typeCheckConstructor/sposConstructor",
+        "argument": "Every active recursive constructor is strictly positive; the negative examples are comments, and List's positive parameter permits the nested Tree occurrence."
+      }
+    },
+    {
+      "id": "legacy/badscope.ma",
+      "path": "tests/legacy/examples/badscope.ma",
+      "category": "SourceError",
+      "reason": "Names Unit without a declaration and repeats pattern variable y; the source deliberately violates scope constraints.",
+      "baselineSuite": null,
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "scope"
+      },
+      "checkingBoundary": {
+        "rule": "scopeCheckTypeSig",
+        "argument": "The function signature refers to undeclared Unit before its deliberately nonlinear patterns are inspected."
+      }
+    },
+    {
+      "id": "legacy/badscope2.ma",
+      "path": "tests/legacy/examples/badscope2.ma",
+      "category": "SourceError",
+      "reason": "Dot pattern y is not bound by any variable pattern.",
+      "baselineSuite": null,
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "scope"
+      },
+      "checkingBoundary": {
+        "rule": "scopeCheckDotPattern",
+        "argument": "The only named variable pattern is x; the dot expression y therefore has no scope binding."
+      }
+    },
+    {
+      "id": "legacy/badscope4.ma",
+      "path": "tests/legacy/examples/badscope4.ma",
+      "category": "SourceError",
+      "reason": "A is introduced as an index binder inside F's type rather than a datatype telescope parameter, but constructors refer to it as though it were in scope.",
+      "baselineSuite": null,
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "scope"
+      },
+      "checkingBoundary": {
+        "rule": "scopeCheckConstructor",
+        "argument": "A is scoped only inside F's index type, not in a datatype telescope, so the constructor type's A references are undefined."
+      }
+    },
+    {
+      "id": "legacy/badscope5.ma",
+      "path": "tests/legacy/examples/badscope5.ma",
+      "category": "SourceError",
+      "reason": "Clauses for f have different numbers of patterns.",
+      "baselineSuite": null,
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "scope"
+      },
+      "checkingBoundary": {
+        "rule": "checkPatternLength",
+        "argument": "Both clause bodies scope, but the clauses have two patterns and one pattern respectively."
+      }
+    },
+    {
+      "id": "legacy/badterm.ma",
+      "path": "tests/legacy/examples/badterm.ma",
+      "category": "IncompleteAnnotation",
+      "reason": "The recursive equation f x = f x has no syntactic descent, but its Unit domain has no constructors. The current SCT checker does not infer vacuous termination from domain emptiness.",
+      "baselineSuite": "negative",
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "termination"
+      },
+      "annotatedCounterpart": "tests/cases/empty-domain.ma"
+    },
+    {
+      "id": "legacy/badterm2.ma",
+      "path": "tests/legacy/examples/badterm2.ma",
+      "category": "UnsupportedTerminating",
+      "reason": "Subtraction-based division decreases a numerical measure but the unsized source does not expose a size/measure contract across minus.",
+      "baselineSuite": "negative",
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "termination"
+      }
+    },
+    {
+      "id": "legacy/badterm3.ma",
+      "path": "tests/legacy/examples/badterm3.ma",
+      "category": "SoundnessCounterexample",
+      "reason": "F x = F (F x) recursively calls F on an inhabited Set domain without descent; this is a divergent definition, not merely a missing annotation.",
+      "baselineSuite": "negative",
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "termination"
+      }
+    },
+    {
+      "id": "legacy/badterm4.ma",
+      "path": "tests/legacy/examples/badterm4.ma",
+      "category": "SoundnessCounterexample",
+      "reason": "The function equation f = f unfolds to itself at type Set -> Set, with no descent or productive observation.",
+      "baselineSuite": "negative",
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "termination"
+      }
+    },
+    {
+      "id": "legacy/bottomcheck.ma",
+      "path": "tests/legacy/examples/bottomcheck.ma",
+      "category": "SourceError",
+      "reason": "An ordinary data declaration has a Size index and clauses mix invalid dot-expression syntax with Nat values returned where Empty is required.",
+      "baselineSuite": null,
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "parse"
+      },
+      "checkingBoundary": {
+        "rule": "parseClause/parseExpr",
+        "argument": "The expression f .i contains a dot outside the expression grammar; whole-file parsing fails before its other typing problems."
+      }
+    },
+    {
+      "id": "legacy/break.ma",
+      "path": "tests/legacy/examples/break.ma",
+      "category": "SoundnessCounterexample",
+      "reason": "F hides a bare Size -> Bool result; recursive clauses decrease only a raw size and diverge at # without an inductive witness.",
+      "baselineSuite": null,
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "typeMismatch"
+      },
+      "checkingBoundary": {
+        "rule": "checkExpr",
+        "argument": "The definition bad claims type Set but its Pi domain is Size; checking that Pi as an element of Set requires checking Size : Set, which is invalid."
+      }
+    },
+    {
+      "id": "legacy/colist.ma",
+      "path": "tests/legacy/examples/colist.ma",
+      "category": "SoundnessCounterexample",
+      "reason": "The finite-valued length function traverses an arbitrary unsized coinductive list; an infinite input has no terminating length computation. The file also mixes a mismatched length clause head into length2.",
+      "baselineSuite": null,
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "termination"
+      },
+      "checkingBoundary": {
+        "rule": "compareVarPure/terminationCheckWithFuel",
+        "argument": "length recurses on the tail of a coinductive constructor. compareVarPure recognizes subterms only under inductive constructors, so its self-call has no strict descent."
+      }
+    },
+    {
+      "id": "legacy/counterexamples/cody_nowraps.ma",
+      "path": "tests/legacy/examples/counterexamples/cody_nowraps.ma",
+      "category": "SoundnessCounterexample",
+      "reason": "Sibling size refinements in M conflate sizes across arguments and can combine with the extended matrix order to certify a one-step loop; reject the invalid pattern refinement.",
+      "baselineSuite": "negative",
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "patternRefinement"
+      }
+    },
+    {
+      "id": "legacy/counterexamples/cody_simplified.ma",
+      "path": "tests/legacy/examples/counterexamples/cody_simplified.ma",
+      "category": "SoundnessCounterexample",
+      "reason": "pre_aux hides the result size in Wrap's parameter O ($ j), invalidating signature admissibility before the later sibling-pattern exploit.",
+      "baselineSuite": "negative",
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "admissibility"
+      }
+    },
+    {
+      "id": "legacy/counterexamples/llet_bug.ma",
+      "path": "tests/legacy/examples/counterexamples/llet_bug.ma",
+      "category": "SoundnessCounterexample",
+      "reason": "A recursive call is hidden in a local let-bound expression; termination call extraction must include that expression.",
+      "baselineSuite": "negative",
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "termination"
+      }
+    },
+    {
+      "id": "legacy/counterexamples/loop_wrapped.ma",
+      "path": "tests/legacy/examples/counterexamples/loop_wrapped.ma",
+      "category": "SoundnessCounterexample",
+      "reason": "A parameterized Wrap hides size-dependent arguments in shift_case and the mutual loop; signature admissibility must inspect parameters as well as the distinguished size index.",
+      "baselineSuite": "negative",
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "admissibility"
+      }
+    },
+    {
+      "id": "legacy/counterexamples/snat_mat_bug.ma",
+      "path": "tests/legacy/examples/counterexamples/snat_mat_bug.ma",
+      "category": "SoundnessCounterexample",
+      "reason": "Deep matching on one SNat argument refines the size shared with another; this creates a spurious decrease used by an old matrix-order rule.",
+      "baselineSuite": "negative",
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "patternRefinement"
+      }
+    },
+    {
+      "id": "legacy/counterexamples/stree_mat_bug.ma",
+      "path": "tests/legacy/examples/counterexamples/stree_mat_bug.ma",
+      "category": "SoundnessCounterexample",
+      "reason": "Deep STree matching refines sizes in sibling branches and enables a spurious matrix decrease for a one-step cycle.",
+      "baselineSuite": "negative",
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "patternRefinement"
+      }
+    },
+    {
+      "id": "legacy/crazy.ma",
+      "path": "tests/legacy/examples/crazy.ma",
+      "category": "UnsupportedTerminating",
+      "reason": "The recursive call swaps arguments after o2e decreases a natural-number measure; the unsized interface hides the helper's size-preservation property.",
+      "baselineSuite": null,
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "termination"
+      },
+      "checkingBoundary": {
+        "rule": "compareExprWithFuel/terminationCheckWithFuel",
+        "argument": "The call swaps y with an o2e result, whose size preservation is absent from its interface; the recursive call graph supplies no certified strict self-decrease."
+      }
+    },
+    {
+      "id": "legacy/crazys.ma",
+      "path": "tests/legacy/examples/crazys.ma",
+      "category": "SourceError",
+      "reason": "Uses an ordinary Size-indexed data declaration and labels crazy clauses bla; these source problems mask the intended sized permutation example.",
+      "baselineSuite": null,
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "typeMismatch"
+      },
+      "checkingBoundary": {
+        "rule": "checkDataType/checkSType",
+        "argument": "The initial SNat declaration is ordinary data indexed by Size; it fails checkSType before reaching the intended sized permutation example."
+      }
+    },
+    {
+      "id": "legacy/def.ma",
+      "path": "tests/legacy/examples/def.ma",
+      "category": "SourceError",
+      "reason": "The const declaration has no defining equals/body and refers to undeclared add, x, y, and z.",
+      "baselineSuite": null,
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "parse"
+      },
+      "checkingBoundary": {
+        "rule": "parseDeclaration",
+        "argument": "A const declaration must have an equals sign and defining expression; this file ends after its type."
+      }
+    },
+    {
+      "id": "legacy/eqSize.ma",
+      "path": "tests/legacy/examples/eqSize.ma",
+      "category": "SourceError",
+      "reason": "Attempts to make Size an ordinary equality index and gives the sized equality constructor a non-successor target; the later loop depends on this invalid declaration.",
+      "baselineSuite": null,
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "typeMismatch"
+      },
+      "checkingBoundary": {
+        "rule": "checkDataType/checkSType",
+        "argument": "The sized Eq declaration has two Size index domains. Only the first is the distinguished size; the second must inhabit Set and fails checkSType."
+      }
+    },
+    {
+      "id": "legacy/fib.ma",
+      "path": "tests/legacy/examples/fib.ma",
+      "category": "PositiveExample",
+      "reason": "Sized productive Fibonacci/merge streams with finite observations and propositional equality examples form the curated positive stream benchmark.",
+      "baselineSuite": "positive",
+      "expected": {
+        "status": "accepted"
+      }
+    },
+    {
+      "id": "legacy/goodterm.ma",
+      "path": "tests/legacy/examples/goodterm.ma",
+      "category": "PositiveExample",
+      "reason": "Structural descent remains visible when a recursively generated function is passed through Id.",
+      "baselineSuite": "positive",
+      "expected": {
+        "status": "accepted"
+      }
+    },
+    {
+      "id": "legacy/hang.ma",
+      "path": "tests/legacy/examples/hang.ma",
+      "category": "SourceError",
+      "reason": "The signature of f refers forward to mutual F before F is available while checking function signatures. This source fails scope checking before it can exercise nonterminating conversion.",
+      "baselineSuite": null,
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "scope"
+      }
+    },
+    {
+      "id": "legacy/ho.ma",
+      "path": "tests/legacy/examples/ho.ma",
+      "category": "PositiveExample",
+      "reason": "Higher-order application and Boolean negation check ordinary lambda/function use.",
+      "baselineSuite": "positive",
+      "expected": {
+        "status": "accepted"
+      }
+    },
+    {
+      "id": "legacy/inconsistentAssumption.ma",
+      "path": "tests/legacy/examples/inconsistentAssumption.ma",
+      "category": "SourceError",
+      "reason": "An ordinary Size-indexed SNat declaration and an equality instantiated at Size mask the later incomplete recursion under a hypothesized size equality; this is not a closed inconsistency witness.",
+      "baselineSuite": null,
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "typeMismatch"
+      },
+      "checkingBoundary": {
+        "rule": "checkDataType/checkSType",
+        "argument": "The initial SNat declaration is ordinary data indexed by Size, so its index is rejected before checking assumed equalities or recursive clauses."
+      }
+    },
+    {
+      "id": "legacy/infbranch.ma",
+      "path": "tests/legacy/examples/infbranch.ma",
+      "category": "PositiveExample",
+      "reason": "An infinitely branching inductive tree map recurses through constructor-supplied functions.",
+      "baselineSuite": "positive",
+      "expected": {
+        "status": "accepted"
+      }
+    },
+    {
+      "id": "legacy/inverse.ma",
+      "path": "tests/legacy/examples/inverse.ma",
+      "category": "PositiveExample",
+      "reason": "An indexed image datatype supplies the witness for a right-inverse function using dependent dot patterns.",
+      "baselineSuite": "positive",
+      "expected": {
+        "status": "accepted"
+      }
+    },
+    {
+      "id": "legacy/k.ma",
+      "path": "tests/legacy/examples/k.ma",
+      "category": "FoundationDependent",
+      "reason": "K/UIP is accepted by the pinned legacy checker. Its general object-identity status remains conditional on DEC-EQ-001; legacy acceptance selects no Mugda2 foundation.",
+      "baselineSuite": "positive",
+      "expected": {
+        "status": "accepted"
+      },
+      "foundation": "legacy-only; DEC-EQ-001 open"
+    },
+    {
+      "id": "legacy/list.ma",
+      "path": "tests/legacy/examples/list.ma",
+      "category": "UnsupportedTerminating",
+      "reason": "Unsized nested reversal and flattening hide descent across transformed lists; corresponding sized developments occur in slist.ma but this source has no such contracts.",
+      "baselineSuite": null,
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "termination"
+      },
+      "checkingBoundary": {
+        "rule": "terminationCheckWithFuel",
+        "argument": "The mutual reverse development calls rev on a reconstructed list containing transformed recursive results; no interface exposes the length preservation needed for the size-change decrease."
+      }
+    },
+    {
+      "id": "legacy/loop.ma",
+      "path": "tests/legacy/examples/loop.ma",
+      "category": "SoundnessCounterexample",
+      "reason": "shift_case and the mutual loop use size-dependent Maybe parameters outside an admissible sized-inductive argument; the resulting historical program diverges.",
+      "baselineSuite": "negative",
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "admissibility"
+      }
+    },
+    {
+      "id": "legacy/loop2.ma",
+      "path": "tests/legacy/examples/loop2.ma",
+      "category": "SoundnessCounterexample",
+      "reason": "A type-level wrapper attempts to conceal the same inadmissible size-dependent Maybe arguments as loop.ma.",
+      "baselineSuite": "negative",
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "admissibility"
+      }
+    },
+    {
+      "id": "legacy/loop3.ma",
+      "path": "tests/legacy/examples/loop3.ma",
+      "category": "SoundnessCounterexample",
+      "reason": "Unsized datatype wrappers attempt to conceal the same inadmissible size-dependent Maybe arguments as loop.ma.",
+      "baselineSuite": "negative",
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "admissibility"
+      }
+    },
+    {
+      "id": "legacy/mut.ma",
+      "path": "tests/legacy/examples/mut.ma",
+      "category": "SoundnessCounterexample",
+      "reason": "The mutual block attempts to use an invalid provisional g while converting f's claimed equality; provisional definitions must not unfold before their block is verified.",
+      "baselineSuite": null,
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "typeMismatch"
+      },
+      "checkingBoundary": {
+        "rule": "checkExpr/leqVal",
+        "argument": "While checking f, g is provisional and cannot unfold. refl Nat (g # x) therefore cannot have the requested type Eq Nat x zero; this fails before g can be committed."
+      }
+    },
+    {
+      "id": "legacy/nat.ma",
+      "path": "tests/legacy/examples/nat.ma",
+      "category": "PositiveExample",
+      "reason": "Natural-number operations, dependent equality proofs, mutual parity, and nested Ackermann recursion form the curated arithmetic example.",
+      "baselineSuite": "positive",
+      "expected": {
+        "status": "accepted"
+      }
+    },
+    {
+      "id": "legacy/natpair.ma",
+      "path": "tests/legacy/examples/natpair.ma",
+      "category": "SoundnessCounterexample",
+      "reason": "The final bad function alternates moving a successor between pair components, giving a two-step recursion cycle rather than descent.",
+      "baselineSuite": null,
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "termination"
+      },
+      "checkingBoundary": {
+        "rule": "terminationCheckWithFuel",
+        "argument": "The final bad function moves a successor between pair fields in a two-step cycle; its saturated call graph has a nondecreasing self-call."
+      }
+    },
+    {
+      "id": "legacy/natstream.ma",
+      "path": "tests/legacy/examples/natstream.ma",
+      "category": "PositiveExample",
+      "reason": "An exploratory unsized stream/bisimulation development with finite observations; support and exact checker outcome are not yet asserted.",
+      "baselineSuite": null,
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "termination"
+      },
+      "checkingBoundary": {
+        "rule": "compareVarPure/terminationCheckWithFuel",
+        "argument": "The first cofun trans recurses only through unsized coinductive constructors. The imported SCT rule provides no guarded-output rule or sized descent for that recursion."
+      }
+    },
+    {
+      "id": "legacy/ord.ma",
+      "path": "tests/legacy/examples/ord.ma",
+      "category": "PositiveExample",
+      "reason": "Curated ordinal/higher-order recursion example; its ozero pattern is an undeclared variable, not the declared ordzero constructor, so acceptance is not evidence of the intended zero-constructor equation.",
+      "baselineSuite": "positive",
+      "expected": {
+        "status": "accepted"
+      }
+    },
+    {
+      "id": "legacy/pair.ma",
+      "path": "tests/legacy/examples/pair.ma",
+      "category": "PositiveExample",
+      "reason": "A simple Boolean pair datatype and its projections check constructor pattern matching.",
+      "baselineSuite": "positive",
+      "expected": {
+        "status": "accepted"
+      }
+    },
+    {
+      "id": "legacy/perf.ma",
+      "path": "tests/legacy/examples/perf.ma",
+      "category": "SoundnessCounterexample",
+      "reason": "The first mutual block contains the reachable recursive-call cycle f(2,2) -> f(4,1) -> g(3,1) -> g(2,2) -> f(2,2), where numerals denote unary Nat values. The helper h traverses both arguments, so these nested calls cannot be discarded; the later stress graphs do not repair this divergence.",
+      "baselineSuite": null,
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "termination"
+      },
+      "checkingBoundary": {
+        "rule": "terminationCheckWithFuel",
+        "argument": "The explicit f/g recursive-call cycle has no well-founded strict descent. The first mutual block must be rejected for termination; an exhausted graph-analysis budget remains unknown and would require investigation rather than satisfying this assertion."
+      }
+    },
+    {
+      "id": "legacy/proc.ma",
+      "path": "tests/legacy/examples/proc.ma",
+      "category": "PositiveExample",
+      "reason": "Exploratory unsized process/fairness and productive oracle examples; support and exact checker outcome remain unasserted.",
+      "baselineSuite": null,
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "termination"
+      },
+      "checkingBoundary": {
+        "rule": "compareVarPure/terminationCheckWithFuel",
+        "argument": "The first cofun m recurses on a tail of unsized coinductive C. Constructor guarding alone is not an SCT descent witness in this imported checker."
+      }
+    },
+    {
+      "id": "legacy/procs.ma",
+      "path": "tests/legacy/examples/procs.ma",
+      "category": "PositiveExample",
+      "reason": "Sized productive process/oracle and fairness witnesses form the curated coinductive process benchmark.",
+      "baselineSuite": "positive",
+      "expected": {
+        "status": "accepted"
+      }
+    },
+    {
+      "id": "legacy/qsort.ma",
+      "path": "tests/legacy/examples/qsort.ma",
+      "category": "UnsupportedTerminating",
+      "reason": "Quicksort recurses on pivot partitions but the unsized pivot interface exposes no size bound; sqsort.ma is the corresponding curated sized algorithm.",
+      "baselineSuite": null,
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "termination"
+      },
+      "checkingBoundary": {
+        "rule": "terminationCheckWithFuel",
+        "argument": "qsapp calls itself on projections of pivot's returned partitions; the unsized helper interface provides no relation showing either partition smaller."
+      }
+    },
+    {
+      "id": "legacy/rose.ma",
+      "path": "tests/legacy/examples/rose.ma",
+      "category": "UnsupportedTerminating",
+      "reason": "The intended breadth-first traversal is terminating but has no exposed worklist measure. Before reaching that traversal, Rose's nested occurrence List (Rose A) fails positivity because List's A parameter lacks a + annotation; the exact whole-source obstruction is positivity.",
+      "baselineSuite": "negative",
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "positivity"
+      }
+    },
+    {
+      "id": "legacy/scolist.ma",
+      "path": "tests/legacy/examples/scolist.ma",
+      "category": "SourceError",
+      "reason": "Ordinary data/codata declarations use Size indices, one clause is misspelled lengt2h, and an inductive length consumes potentially infinite input; the file does not isolate one checker obligation.",
+      "baselineSuite": null,
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "typeMismatch"
+      },
+      "checkingBoundary": {
+        "rule": "checkDataType/checkSType",
+        "argument": "The initial ordinary Nat declaration is indexed by Size, which is not a Set-valued index; this precedes the mixed later examples."
+      }
+    },
+    {
+      "id": "legacy/set.ma",
+      "path": "tests/legacy/examples/set.ma",
+      "category": "SourceError",
+      "reason": "The intended W-like datatype uses a universe-valued family A -> Set as an ordinary index outside the imported Set-valued-index fragment. The explicitly inconsistent Set : Set example is commented out.",
+      "baselineSuite": null,
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "typeMismatch"
+      },
+      "checkingBoundary": {
+        "rule": "checkDataType/checkSType",
+        "argument": "W's index domain A -> Set contains Set as a codomain. It is a universe-valued family rather than a Set-valued index in the imported hierarchy, so checkSType rejects it."
+      }
+    },
+    {
+      "id": "legacy/sigma.ma",
+      "path": "tests/legacy/examples/sigma.ma",
+      "category": "PositiveExample",
+      "reason": "Dependent pair projections preserve the second projection's dependence on the first.",
+      "baselineSuite": "positive",
+      "expected": {
+        "status": "accepted"
+      }
+    },
+    {
+      "id": "legacy/simple.ma",
+      "path": "tests/legacy/examples/simple.ma",
+      "category": "PositiveExample",
+      "reason": "Booleans, indexed result types, and structurally recursive natural-number functions form the basic curated smoke example.",
+      "baselineSuite": "positive",
+      "expected": {
+        "status": "accepted"
+      }
+    },
+    {
+      "id": "legacy/slist.ma",
+      "path": "tests/legacy/examples/slist.ma",
+      "category": "PositiveExample",
+      "reason": "Sized lists expose helper-preserved bounds for nested reversal, splitting, merging, and mergesort.",
+      "baselineSuite": "positive",
+      "expected": {
+        "status": "accepted"
+      }
+    },
+    {
+      "id": "legacy/snat.ma",
+      "path": "tests/legacy/examples/snat.ma",
+      "category": "SourceError",
+      "reason": "SNat is correctly declared sized, but the mixed arithmetic file includes the explicitly bad wkSNat2 signature (i : Size) -> SNat ($ i) -> SNat i. Its successor-indexed input does not supply the permitted inductive witness at bound i, so this source declaration is inadmissible before its incomplete clauses are checked.",
+      "baselineSuite": null,
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "admissibility"
+      },
+      "checkingBoundary": {
+        "rule": "szCheckIndFunSize/szUsed'",
+        "argument": "For the quantified bound i, szUsed' does not recognize SNat ($ i) as an inductive argument at exactly i, because its size index is VSucc (VGen i) rather than VGen i. The fallback nocc test also fails because i occurs in that input. typeCheckFuns therefore rejects wkSNat2's signature for admissibility before checking its size-pattern completeness."
+      }
+    },
+    {
+      "id": "legacy/sord.ma",
+      "path": "tests/legacy/examples/sord.ma",
+      "category": "PositiveExample",
+      "reason": "Sized ordinal recursion exposes descent through a higher-order constructor without an extra subterm axiom.",
+      "baselineSuite": "positive",
+      "expected": {
+        "status": "accepted"
+      }
+    },
+    {
+      "id": "legacy/sort.ma",
+      "path": "tests/legacy/examples/sort.ma",
+      "category": "UnsupportedTerminating",
+      "reason": "Dependent index-correlated coverage must establish that nil requires zero and cons requires successor. Erased incompatible input pairs are not real counterexamples. Existing variable-pattern and sorting-specification caveats remain.",
+      "baselineSuite": "positive",
+      "expected": {
+        "status": "unknown",
+        "reason": "unsupportedCoverage",
+        "context": "coverage of insert: the opaque sort has no checked closed witness"
+      },
+      "semanticIntended": {
+        "status": "accepted"
+      }
+    },
+    {
+      "id": "legacy/sp.ma",
+      "path": "tests/legacy/examples/sp.ma",
+      "category": "PositiveExample",
+      "reason": "Sized stream processors combine inductive input consumption with productive output and a finite observation.",
+      "baselineSuite": "positive",
+      "expected": {
+        "status": "accepted"
+      }
+    },
+    {
+      "id": "legacy/sp3.ma",
+      "path": "tests/legacy/examples/sp3.ma",
+      "category": "SourceError",
+      "reason": "Uses a mutual block containing datatype and codata declarations, which the imported scope checker does not support, before the stream-processor examples.",
+      "baselineSuite": null,
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "scope"
+      },
+      "checkingBoundary": {
+        "rule": "scopeCheckDeclaration",
+        "argument": "A mutual block starts with data ISP and codata SP. The imported scope checker supports mutual function blocks only."
+      }
+    },
+    {
+      "id": "legacy/sp4.ma",
+      "path": "tests/legacy/examples/sp4.ma",
+      "category": "SourceError",
+      "reason": "The exploratory stream-processor file mixes fun and cofun in a mutual block, which is unsupported by the imported scope checker; this first obstruction precedes its old Size-indexed codata and final divergent observation.",
+      "baselineSuite": null,
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "scope"
+      },
+      "checkingBoundary": {
+        "rule": "scopeCheckFunDecls",
+        "argument": "The ieat/eat mutual block mixes fun and cofun; whole-file scope checking rejects that combination before typing the Size-indexed codata declarations."
+      }
+    },
+    {
+      "id": "legacy/sqsort.ma",
+      "path": "tests/legacy/examples/sqsort.ma",
+      "category": "PositiveExample",
+      "reason": "Sized partition contracts expose the recursive bound needed by the quicksort client.",
+      "baselineSuite": "positive",
+      "expected": {
+        "status": "accepted"
+      }
+    },
+    {
+      "id": "legacy/str.ma",
+      "path": "tests/legacy/examples/str.ma",
+      "category": "SoundnessCounterexample",
+      "reason": "zeroes has only a successor Nat input row (the misheaded cons clause name is ignored). Input zero is a closed typed missing argument; emptiness of result Stream zero cannot justify a missing input branch.",
+      "baselineSuite": "positive",
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "coverage"
+      },
+      "semanticIntended": {
+        "status": "rejected",
+        "diagnostic": "coverage"
+      }
+    },
+    {
+      "id": "legacy/stream.ma",
+      "path": "tests/legacy/examples/stream.ma",
+      "category": "SoundnessCounterexample",
+      "reason": "The exploratory file includes unproductive unp i = unp i and size-increasing wkStream2 among valid examples; whole-file acceptance would not certify productivity.",
+      "baselineSuite": null,
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "admissibility"
+      },
+      "checkingBoundary": {
+        "rule": "szCheckCoFunSize",
+        "argument": "wkStream_ok quantifies i and then consumes Stream A ($ i); cofunction admissibility forbids that i-dependent input. This is the first obstructed definition, before wkStream2 or unp."
+      }
+    },
+    {
+      "id": "legacy/stree.ma",
+      "path": "tests/legacy/examples/stree.ma",
+      "category": "PositiveExample",
+      "reason": "Sized trees and size-preserving mapL support modular tree mapping and flattening.",
+      "baselineSuite": "positive",
+      "expected": {
+        "status": "accepted"
+      }
+    },
+    {
+      "id": "legacy/subtype.ma",
+      "path": "tests/legacy/examples/subtype.ma",
+      "category": "SourceError",
+      "reason": "The intended structural subtyping decision uses _ _ as wildcards, but the concrete language treats both underscores as the same ordinary variable and rejects the nonlinear clause.",
+      "baselineSuite": null,
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "scope"
+      },
+      "checkingBoundary": {
+        "rule": "collectVarPNames",
+        "argument": "The final pattern _ _ repeats the ordinary identifier _. There is no wildcard production mapping it to an anonymous variable, so the pattern is nonlinear."
+      }
+    },
+    {
+      "id": "legacy/sum.ma",
+      "path": "tests/legacy/examples/sum.ma",
+      "category": "UnsupportedTerminating",
+      "reason": "The mutually recursive Nat/Sum traversal terminates by descent over natural-number payloads, but crossing different wrapper constructors hides that relation from the imported size-change order.",
+      "baselineSuite": null,
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "termination"
+      },
+      "checkingBoundary": {
+        "rule": "compareExprWithFuel/terminationCheckWithFuel",
+        "argument": "Calls f(succ x)->g(inl x) and h(succ x)->g(inr x) cross different constructors; comparison records Un, so the cycle with g's destructuring calls has no certified strict descent."
+      }
+    },
+    {
+      "id": "legacy/tree.ma",
+      "path": "tests/legacy/examples/tree.ma",
+      "category": "UnsupportedTerminating",
+      "reason": "Unsized tree mapping and flattening recurse through mapL, hiding the helper-preserved bound made explicit in stree.ma.",
+      "baselineSuite": null,
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "termination"
+      },
+      "checkingBoundary": {
+        "rule": "collectCallsExprWithFuel/terminationCheckWithFuel",
+        "argument": "mapT recurses through a partial application passed to mapL. Its missing tree argument is an unknown matrix row and the helper's size-preservation contract is absent."
+      }
+    },
+    {
+      "id": "legacy/usp.ma",
+      "path": "tests/legacy/examples/usp.ma",
+      "category": "SourceError",
+      "reason": "Uses unsupported mutual datatype/codata declarations before unsized stream processors, so whole-file failure cannot isolate the intended recursion behavior.",
+      "baselineSuite": null,
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "scope"
+      },
+      "checkingBoundary": {
+        "rule": "scopeCheckDeclaration",
+        "argument": "The first mutual block declares data ISP and codata SP, while the imported scope checker supports mutual function blocks only."
+      }
+    },
+    {
+      "id": "legacy/vec.ma",
+      "path": "tests/legacy/examples/vec.ma",
+      "category": "UnsupportedTerminating",
+      "reason": "Typed dependent-index refinement must exclude nil from Vec A (succ n), and preserve compatible index pairs in the later append/reversal matrices. The source remains a valid total-language target.",
+      "baselineSuite": "positive",
+      "expected": {
+        "status": "unknown",
+        "reason": "unsupportedCoverage",
+        "context": "coverage of head: an erased coverage hole is not a checked typed input"
+      },
+      "semanticIntended": {
+        "status": "accepted"
+      }
+    }
+  ]
+}

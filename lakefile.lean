@@ -11,3 +11,11 @@ lean_lib Mugda2 where
 @[default_target]
 lean_exe mugda2 where
   root := `Main
+
+@[default_target]
+lean_exe «mugda2-regression» where
+  root := `Mugda2.Regression
+
+@[default_target]
+lean_exe «mugda2-experiments» where
+  root := `ExperimentMain

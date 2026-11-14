@@ -1,0 +1,208 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "id": "structural-recursion",
+      "path": "tests/cases/structural-recursion.ma",
+      "category": "PositiveExample",
+      "budget": {},
+      "expected": {
+        "status": "accepted"
+      }
+    },
+    {
+      "id": "size-pattern-incomplete",
+      "path": "tests/cases/size-pattern-incomplete.ma",
+      "category": "SoundnessCounterexample",
+      "budget": {},
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "sizePatternCompleteness"
+      }
+    },
+    {
+      "id": "bad-sized-codata",
+      "path": "tests/cases/bad-sized-codata.ma",
+      "category": "SoundnessCounterexample",
+      "budget": {},
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "admissibility"
+      }
+    },
+    {
+      "id": "bad-sized-data",
+      "path": "tests/cases/bad-sized-data.ma",
+      "category": "SoundnessCounterexample",
+      "budget": {},
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "admissibility"
+      }
+    },
+    {
+      "id": "bad-positivity",
+      "path": "tests/cases/bad-positivity.ma",
+      "category": "SoundnessCounterexample",
+      "budget": {},
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "positivity"
+      }
+    },
+    {
+      "id": "mutual-termination",
+      "path": "tests/cases/mutual-termination.ma",
+      "category": "SoundnessCounterexample",
+      "budget": {},
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "termination"
+      }
+    },
+    {
+      "id": "mutual-type-mismatch",
+      "path": "tests/cases/mutual-type-mismatch.ma",
+      "category": "SoundnessCounterexample",
+      "budget": {},
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "typeMismatch"
+      }
+    },
+    {
+      "id": "bad-parse",
+      "path": "tests/cases/bad-parse.ma",
+      "category": "SourceError",
+      "budget": {},
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "parse"
+      }
+    },
+    {
+      "id": "bad-scope",
+      "path": "tests/cases/bad-scope.ma",
+      "category": "SourceError",
+      "budget": {},
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "scope"
+      }
+    },
+    {
+      "id": "structural-recursion/checkerFuel-zero",
+      "path": "tests/cases/structural-recursion.ma",
+      "category": "ResourceExhaustion",
+      "budget": {
+        "checkerFuel": 0
+      },
+      "expected": {
+        "status": "unknown",
+        "reason": "outOfFuel",
+        "context": "Nat: whnf"
+      }
+    },
+    {
+      "id": "structural-recursion/comparisonFuel-zero",
+      "path": "tests/cases/structural-recursion.ma",
+      "category": "ResourceExhaustion",
+      "budget": {
+        "comparisonFuel": 0
+      },
+      "expected": {
+        "status": "unknown",
+        "reason": "outOfFuel",
+        "context": "termination comparison"
+      }
+    },
+    {
+      "id": "structural-recursion/closureFuel-zero",
+      "path": "tests/cases/structural-recursion.ma",
+      "category": "ResourceExhaustion",
+      "budget": {
+        "closureFuel": 0
+      },
+      "expected": {
+        "status": "unknown",
+        "reason": "outOfFuel",
+        "context": "termination call-graph closure"
+      }
+    },
+    {
+      "id": "structural-recursion/lexerFuel-zero",
+      "path": "tests/cases/structural-recursion.ma",
+      "category": "ResourceExhaustion",
+      "budget": {
+        "lexerFuel": 0
+      },
+      "expected": {
+        "status": "unknown",
+        "reason": "outOfFuel",
+        "context": "Lexer"
+      }
+    },
+    {
+      "id": "structural-recursion/parserFuel-zero",
+      "path": "tests/cases/structural-recursion.ma",
+      "category": "ResourceExhaustion",
+      "budget": {
+        "parserFuel": 0
+      },
+      "expected": {
+        "status": "unknown",
+        "reason": "outOfFuel",
+        "context": "Parser"
+      }
+    },
+    {
+      "id": "empty-domain",
+      "path": "tests/cases/empty-domain.ma",
+      "category": "PositiveExample",
+      "reason": "Explicit empty elimination instead of unguarded recursion on an empty domain.",
+      "expected": {
+        "status": "accepted"
+      }
+    },
+    {
+      "id": "rose-positive-parameter",
+      "path": "tests/cases/rose-positive-parameter.ma",
+      "category": "UnsupportedTerminating",
+      "reason": "A positive List parameter removes the original constructor obstruction; breadth-first recursion still needs a worklist measure.",
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "termination"
+      }
+    },
+    {
+      "id": "overlap-conversion",
+      "path": "tests/cases/overlap-conversion.ma",
+      "category": "SoundnessCounterexample",
+      "reason": "An earlier constructor clause must block reduction of a type family on a neutral argument; falling through would accept a closed inhabitant of Empty.",
+      "expected": {
+        "status": "rejected",
+        "diagnostic": "typeMismatch"
+      }
+    },
+    {
+      "id": "sized-division",
+      "path": "tests/cases/sized-division.ma",
+      "category": "PositiveExample",
+      "reason": "Sized subtraction preserves its first input bound, exposing a strictly smaller recursive dividend.",
+      "expected": {
+        "status": "accepted"
+      }
+    },
+    {
+      "id": "nested-cofun-size",
+      "path": "tests/cases/nested-cofun-size.ma",
+      "category": "UnsupportedCoverage",
+      "reason": "Cofun admissibility justifies top-level result observation sizes, not successor tests inside an unrelated constructor field. The erased constructor shapes alone cannot certify these nested size patterns.",
+      "expected": {
+        "status": "unknown",
+        "reason": "unsupportedCoverage",
+        "context": "coverage of classify: successor size patterns require a sized observation bridge"
+      }
+    }
+  ]
+}

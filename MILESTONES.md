@@ -1,7 +1,15 @@
 # Mugda2 — Milestone Plan
 
 > [!NOTE]
-> **Repository Status:** `mugda2` is currently at the **design and planning stage**. At this stage the repository contains the milestone plan, architectural specifications, and design notes; the Mugda2 checker, core rechecker, and JSON-RPC service described below are planned components building on the verified Mugda v1.0 baseline ([`github.com/kmehltretter82/mugda` @ `b0c5b53`](https://github.com/kmehltretter82/mugda/tree/b0c5b53)).
+> **Repository Status:** Design baseline and cost prototype, with **M1 baseline hardening in progress**. The adapted pinned legacy checker, structured JSON CLI, regression manifests, architecture records, and dependency audit are now implemented. [M1 status](docs/M1-STATUS.md) records the evidence and unfinished gates. The independently verified Mugda2 core and JSON-RPC service below remain planned; legacy checker acceptance does not establish their theorems.
+
+> [M1.5 host controls](docs/experiments/README.md) now include operation-based queue
+> cost reasoning and finite certificate traversal through abstract helpers. The
+> cross-foundation comparison and native sized rule remain unresolved. The
+> [independent legacy review](docs/M1-REVIEW.md) records the fixed clause-fallthrough
+> and nullary empty-type exploits. [Finite coverage certificates](docs/COVERAGE.md)
+> now gate promotion; full dependent coverage and the source/core soundness bridge
+> still require typed core work.
 
 Synthesized from [idea1.txt](idea1.txt), [idea2.txt](idea2.txt), the foundational literature synthesis, the external design audit, and the Lean 4 baseline in [`kmehltretter82/mugda` @ `b0c5b53`](https://github.com/kmehltretter82/mugda/tree/b0c5b53).
 
@@ -161,6 +169,11 @@ Commit short architecture decision records (ADRs) resolving foundational boundar
 - **Trust & axiom audit:** CI records `#print axioms` for every theorem and isolates `native_decide`.
 
 **Exit:** all corpus items have manifest classifications and diagnostic-category assertions; failed mutual blocks are transactionally rolled back; fuel exhaustion returns `unknown`.
+
+**Current evidence:** [corpus record](docs/M1-CORPUS.md), [pinned import ledger](tests/legacy/baseline.json),
+[checker](Mugda2/Checker.lean), and [status](docs/M1-STATUS.md). The corpus record explicitly
+reconciles legacy sources whose first failure differs from the table above; these
+sources cannot count as evidence for a later gate they never reach.
 
 ---
 

@@ -1,0 +1,306 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": "m1_5-host-controls-1",
+  "kind": "host-control",
+  "registrationStatus": "registered-before-prospective-elaboration-and-replay-timings",
+  "scope": "Frozen host-control timing protocol; cross-foundation comparison is not yet frozen or executed.",
+  "toolchain": "leanprover/lean4:v4.35.0",
+  "toolchainCommit": "eb6cafb7290e8bd5f2937522d8d804f58f02bafc",
+  "sourceBaseCommit": "293536084ec87ba81111574eca4887091c61460d",
+  "sourceVersion": "Local uncommitted source snapshot; exact complete Lean/config hashes are pinned by auditReportSha256.",
+  "auditReportSha256": "f31d7bcc4beb6db6bda12f7ebbc2c18277eada9c870ae18b430d68ddb39a0589",
+  "knownExploratoryEvidence": [
+    "Existing Giralf theorem development and n=5 queue demonstration predate this registration.",
+    "The 70 finite host-control rows have already been checked during development; this registration is prospective for repeated elaboration/kernel-replay timings, not a claim those exploratory observations were preregistered."
+  ],
+  "decisionOwner": {
+    "role": "project maintainer",
+    "name": "Karl Mehltretter",
+    "candidateSelection": "unresolved; no automatic choice by this runner"
+  },
+  "cases": [
+    {
+      "id": "exp-a-abstract-client",
+      "module": "Mugda2.Experiments.QueueClient",
+      "source": "Mugda2/Experiments/QueueClient.lean",
+      "sourceSha256": "0c154d4690c5a3ecb07b4371010eb55fe1f0519972217dc5480b3199a580f0b4"
+    },
+    {
+      "id": "exp-b-translation",
+      "module": "Mugda2.Experiments.SizedCertificates",
+      "source": "Mugda2/Experiments/SizedCertificates.lean",
+      "sourceSha256": "8baca10dbefcd580f49f1177b48d6fd9df2316b1d6bc8e9d881134df584f688a"
+    }
+  ],
+  "runtimeInputs": {
+    "queueSizes": [
+      0,
+      1,
+      2,
+      4,
+      8,
+      16,
+      32,
+      64,
+      128,
+      256
+    ],
+    "certificateDepths": [
+      0,
+      1,
+      2,
+      4,
+      8
+    ],
+    "certificateCounters": [
+      0,
+      1,
+      2,
+      16,
+      256,
+      1099511627776
+    ],
+    "helpers": [
+      "identity",
+      "neutral"
+    ],
+    "generator": "Mugda2.Experiments.SizedCertificates.fixture",
+    "encoding": "Natural repeat counter; counterBitTotal is canonical unsigned bit-length accounting, not a wire serialization."
+  },
+  "costModel": {
+    "endpoint": "Host CostM abstract primitive events; no native-time or machine-allocation theorem.",
+    "queueEvents": {
+      "batchedEnqueue": 1,
+      "batchedDequeue": "one inspection/pop plus one transfer per rear cell when rotating; front pop costs one",
+      "singleListEnqueue": "one visit per existing cell plus one new tail cell",
+      "singleListDequeue": 1
+    },
+    "ghostObservations": "contents and potential are specification observations, not counted native operations.",
+    "clientCharges": {
+      "enqueue": "length(contents q)+2 with potential difference",
+      "dequeue": "1 with potential difference",
+      "commonBudget": "n*(n+3)"
+    },
+    "certificateMeasures": [
+      "height",
+      "syntaxNodes",
+      "counterBitTotal",
+      "expandedEventCount"
+    ],
+    "denotation": "Finite event-list semantics in the theorem only; large runtime repeat counts are not expanded."
+  },
+  "measurement": {
+    "warmupRuns": 1,
+    "measuredRuns": 5,
+    "elaborationTimeoutSeconds": 300,
+    "replayTimeoutSeconds": 60,
+    "maxRssBytes": 1073741824,
+    "cachePolicy": "Fresh target .olean per run; installed dependencies and OS caches reused.",
+    "replayMeaning": "Fresh environment replay by a separate process using the same pinned Lean kernel; not an independent kernel implementation.",
+    "missingMetrics": [
+      "kernel expression nodes",
+      "handwritten proof tokens",
+      "source/core correspondence for object candidates"
+    ]
+  },
+  "decision": {
+    "selectionEligible": false,
+    "semanticGates": [
+      {
+        "id": "EXP-A-FIFO-behavior",
+        "status": "proved",
+        "declarations": [
+          {
+            "module": "Mugda2.Queue",
+            "name": "Mugda2.Giralf.fifoRoundtrip_correct"
+          }
+        ]
+      },
+      {
+        "id": "EXP-A-compositional-cost",
+        "status": "proved",
+        "declarations": [
+          {
+            "module": "Mugda2.Experiments.QueueClient",
+            "name": "Mugda2.Experiments.roundtrip_correct_and_bounded"
+          }
+        ]
+      },
+      {
+        "id": "EXP-A-implementation-swap",
+        "status": "proved",
+        "declarations": [
+          {
+            "module": "Mugda2.Experiments.QueueImplementations",
+            "name": "Mugda2.Experiments.queue_swap"
+          }
+        ]
+      },
+      {
+        "id": "EXP-B-opaque-helper-height-denotation",
+        "status": "proved",
+        "declarations": [
+          {
+            "module": "Mugda2.Experiments.SizedCertificates",
+            "name": "Mugda2.Experiments.SizedCertificates.normalize_correct"
+          }
+        ]
+      },
+      {
+        "id": "EXP-B-restricted-size-erasure",
+        "status": "proved",
+        "declarations": [
+          {
+            "module": "Mugda2.Experiments.SizedCertificates",
+            "name": "Mugda2.Experiments.SizedCertificates.normalizeSized_uniform"
+          },
+          {
+            "module": "Mugda2.Experiments.SizedCertificates",
+            "name": "Mugda2.Experiments.SizedCertificates.normalizeSized_erase"
+          },
+          {
+            "module": "Mugda2.Experiments.SizedCertificates",
+            "name": "Mugda2.Experiments.SizedCertificates.normalizeSized_denote"
+          }
+        ]
+      },
+      {
+        "id": "EXP-B-constructor-equation-P",
+        "status": "proved",
+        "declarations": [
+          {
+            "module": "Mugda2.Experiments.SizedCertificates",
+            "name": "Mugda2.Experiments.SizedCertificates.normalize_sequence"
+          },
+          {
+            "module": "Mugda2.Experiments.SizedCertificates",
+            "name": "Mugda2.Experiments.SizedCertificates.normalize_repeat"
+          }
+        ]
+      },
+      {
+        "id": "EXP-B-descent-bound-negative-witnesses",
+        "status": "proved",
+        "declarations": [
+          {
+            "module": "Mugda2.Experiments.SizedCertificates",
+            "name": "Mugda2.Experiments.SizedCertificates.growing_helper_rejected"
+          },
+          {
+            "module": "Mugda2.Experiments.SizedCertificates",
+            "name": "Mugda2.Experiments.SizedCertificates.same_bound_rejected"
+          }
+        ]
+      },
+      {
+        "id": "object-calculus-typing-consistency-and-conversion",
+        "status": "unresolved",
+        "evidence": [
+          "docs/M1-REVIEW.md",
+          "MILESTONES.md"
+        ]
+      },
+      {
+        "id": "native-parametric-quantifier-and-negative-source-checking",
+        "status": "unresolved",
+        "evidence": [
+          "Mugda2/Experiments/SizedCertificates.lean"
+        ]
+      },
+      {
+        "id": "cross-foundation-and-integration-comparison",
+        "status": "unresolved",
+        "evidence": [
+          "docs/EXPERIMENTS.md"
+        ]
+      }
+    ],
+    "thresholds": {
+      "proofTokenReduction": 0.25,
+      "maxTermNodeRatio": 2,
+      "maxReplayTimeRatio": 1.5
+    },
+    "policy": "All shared semantic gates are mandatory. A richer object candidate needs the registered practical improvement and resource guardrails, or a predeclared necessary equation the control cannot provide. Missing metrics/pins or host-only results cannot select a foundation. Timeouts are unknown. Hypothesis, opacity, metric, or equation changes require a new protocol version."
+  },
+  "candidates": [
+    {
+      "id": "host-lean-controls",
+      "artifactKind": "host-Lean preparatory control",
+      "rulePinsStatus": "pinned",
+      "rulePins": {
+        "sourceCases": [
+          "Mugda2/Experiments/QueueClient.lean",
+          "Mugda2/Experiments/SizedCertificates.lean"
+        ],
+        "hostRules": "Lean 4 pinned toolchain; this is not a specification of object-language Id/OTT/cubical equality."
+      },
+      "toolchainPinsStatus": "pinned",
+      "toolchainPins": {
+        "version": "leanprover/lean4:v4.35.0",
+        "commit": "eb6cafb7290e8bd5f2937522d8d804f58f02bafc"
+      }
+    },
+    {
+      "id": "minimal-intensional-object-control",
+      "artifactKind": "planned object-calculus candidate",
+      "rulePinsStatus": "unresolved",
+      "toolchainPinsStatus": "unresolved",
+      "missing": [
+        "exact finite F0 syntax/judgments",
+        "object identity rules and semantic model",
+        "source/core correspondence"
+      ]
+    },
+    {
+      "id": "cicobs-2025",
+      "artifactKind": "planned observational object-calculus candidate",
+      "rulePinsStatus": "unresolved",
+      "toolchainPinsStatus": "unresolved",
+      "reference": {
+        "doi": "10.1145/3719342",
+        "url": "https://pujet.fr/pdf/toplas25_cicobs.pdf",
+        "publishedVersion": "TOPLAS 47(2), Article6, April2025"
+      },
+      "missing": [
+        "exact adopted indexed-inductive/coercion/conversion fragment",
+        "implementation revision and dependency closure",
+        "shared cost/opacity integration proofs"
+      ]
+    },
+    {
+      "id": "cubical-phase-2026",
+      "artifactKind": "planned cubical/modal object-calculus candidate",
+      "rulePinsStatus": "unresolved",
+      "toolchainPinsStatus": "unresolved",
+      "reference": {
+        "doi": "10.1145/3776673",
+        "url": "https://www.cs.cmu.edu/~runmingl/paper/afat.pdf",
+        "publishedVersion": "PACMPL10 POPL Article31, January2026"
+      },
+      "missing": [
+        "interval/path/composition/univalence fragment",
+        "phase/gluing/sealing rules and scope",
+        "representation relation or quotient treatment",
+        "implementation revision and dependency closure"
+      ]
+    },
+    {
+      "id": "native-finite-sized-recursion",
+      "artifactKind": "planned native recursion candidate",
+      "rulePinsStatus": "unresolved",
+      "toolchainPinsStatus": "unresolved",
+      "missing": [
+        "native irrelevant parametric size rules",
+        "substitution/uniformity and semantic justification",
+        "same-source negative rule tests"
+      ]
+    }
+  ],
+  "translationReference": {
+    "doi": "10.4230/LIPIcs.LICS.2026.41",
+    "url": "https://doi.org/10.4230/LIPIcs.LICS.2026.41",
+    "publishedVersion": "LICS2026, paper41",
+    "relationship": "Technique to investigate; the host well-founded control does not implement either full published observational calculus."
+  },
+  "registeredAt": "2026-11-14T05:31:09.301368+00:00"
+}
